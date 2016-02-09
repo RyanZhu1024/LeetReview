@@ -2138,6 +2138,7 @@ public class Medium {
     public static void main(String[] args) {
 //        System.out.println(new Medium().longestIncreasingPath(new int[][]{{3, 4, 5}, {3, 2, 6}, {2, 2, 1}}));
 //        System.out.println(new Medium().subsetsWithDup(new int[]{1, 1, 2, 2}));
-        System.out.println(new Medium().uniquePathsWithObstacles(new int[][]{{0, 1}}));
+//        System.out.println(new Medium().uniquePathsWithObstacles(new int[][]{{0, 1}}));
+
     }
 }
