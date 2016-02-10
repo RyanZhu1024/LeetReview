@@ -2134,9 +2134,143 @@ public class Medium {
         return obstacleGrid[m - 1][n - 1];
     }
 
+    public List<TreeNode> generateTrees(int n) {
+        return genTreeList(1, n);
+    }
+
+    private List<TreeNode> genTreeList(int start, int end) {
+        List<TreeNode> list = new ArrayList<>();
+        if (start > end) {
+            list.add(null);
+            return list;
+        }
+        for (int idx = start; idx <= end; idx++) {
+            List<TreeNode> leftList = genTreeList(start, idx - 1);
+            List<TreeNode> rightList = genTreeList(idx + 1, end);
+            for (TreeNode left : leftList) {
+                for (TreeNode right : rightList) {
+                    TreeNode root = new TreeNode(idx);
+                    root.left = left;
+                    root.right = right;
+                    list.add(root);
+                }
+            }
+        }
+        return list;
+    }
+
+    /**
+     * One way to serialize a binary tree is to use pre-order traversal. When we encounter a non-null node, we record the node's value. If it is a null node, we record using a sentinel value such as #.
+     * <p>
+     * _9_
+     * /   \
+     * 3     2
+     * / \   / \
+     * 4   1  #  6
+     * / \ / \   / \
+     * # # # #   # #
+     * For example, the above binary tree can be serialized to the string "9,3,4,#,#,1,#,#,2,#,6,#,#", where # represents a null node.
+     * <p>
+     * Given a string of comma separated values, verify whether it is a correct preorder traversal serialization of a binary tree. Find an algorithm without reconstructing the tree.
+     * <p>
+     * Each comma separated value in the string must be either an integer or a character '#' representing null pointer.
+     * <p>
+     * You may assume that the input format is always valid, for example it could never contain two consecutive commas such as "1,,3".
+     * <p>
+     * Example 1:
+     * "9,3,4,#,#,1,#,#,2,#,6,#,#"
+     * Return true
+     * <p>
+     * Example 2:
+     * "1,#"
+     * Return false
+     * <p>
+     * Example 3:
+     * "9,#,#,1"
+     * Return false
+     *
+     * @param preorder
+     * @return
+     */
+    public boolean isValidSerialization(String preorder) {
+        Stack<String> stack = new Stack<>();
+        if (preorder.equals("#")) return true;
+        return serHelper(preorder, stack);
+    }
+
+    public boolean serHelper(String preorder, Stack<String> stack) {
+        String[] orders = preorder.split(",");
+        for (int i = 0; i < orders.length; i++) {
+            if (isNumber(orders[i])) {
+                if (stack.isEmpty()) {
+                    if (i > 0) {
+                        return false;
+                    }
+                    stack.push("#");
+                    stack.push("#");
+                } else {
+                    stack.pop();
+                    stack.push("#");
+                    stack.push("#");
+                }
+            } else {
+                if (stack.isEmpty()) {
+                    return false;
+                } else {
+                    stack.pop();
+                }
+            }
+        }
+        return stack.isEmpty();
+    }
+
+    public boolean isNumber(String c) {
+        try {
+            Integer.valueOf(c);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Given a linked list and a value x, partition it such that all nodes less than x come before nodes greater than or equal to x.
+     * <p>
+     * You should preserve the original relative order of the nodes in each of the two partitions.
+     * <p>
+     * For example,
+     * Given 1->4->3->2->5->2 and x = 3,
+     * return 1->2->2->4->3->5.
+     *
+     * @param head
+     * @param x
+     * @return
+     */
+    public ListNode partition(ListNode head, int x) {
+        ListNode dm1 = new ListNode(0);
+        ListNode dm2 = new ListNode(0);
+        ListNode cur1 = dm1, cur2 = dm2;
+        while (head != null) {
+            if (head.val < x) {
+                cur1.next = head;
+                cur1 = head;
+            } else {
+                cur2.next = head;
+                cur2 = head;
+            }
+            head = head.next;
+        }
+        cur2.next = null;
+        cur1.next = dm2.next;
+        return dm1.next;
+    }
+
+    public ListNode insertionSortList(ListNode head) {
+
+    }
 
     public static void main(String[] args) {
-//        System.out.println(new Medium().longestIncreasingPath(new int[][]{{3, 4, 5}, {3, 2, 6}, {2, 2, 1}}));
+        System.out.println(new Medium().isValidSerialization("9,3,4,#,#,1,#,#,#,2,#,6,#,#"));
 //        System.out.println(new Medium().subsetsWithDup(new int[]{1, 1, 2, 2}));
 //        System.out.println(new Medium().uniquePathsWithObstacles(new int[][]{{0, 1}}));
 
