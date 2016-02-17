@@ -13,7 +13,7 @@ public class Medium {
     }
 
     // Definition for a binary tree node.
-    public class TreeNode {
+    public static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;
@@ -2266,11 +2266,135 @@ public class Medium {
     }
 
     public ListNode insertionSortList(ListNode head) {
+        if (head == null || head.next == null) return head;
+        ListNode node = new ListNode(head.val);
+        ListNode cursor = head.next;
+        while (cursor != null) {
+            if (cursor.val < node.val) {
+                ListNode temp = new ListNode(cursor.val);
+                temp.next = node;
+                node = temp;
+            } else {
+                ListNode cur = node, temp = new ListNode(cursor.val);
+                while (cur.next != null && cur.next.val <= cursor.val) {
+                    cur = cur.next;
+                }
+                temp.next = cur.next;
+                cur.next = temp;
+            }
+            cursor = cursor.next;
+        }
+        return node;
+    }
 
+    /**
+     * Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
+     * <p>
+     * According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes v and w as the lowest node in T that has both v and w as descendants (where we allow a node to be a descendant of itself).”
+     * <p>
+     * _______3______
+     * /              \
+     * ___5__          ___1__
+     * /      \        /      \
+     * 6      _2       0       8
+     * /  \
+     * 7   4
+     * For example, the lowest common ancestor (LCA) of nodes 5 and 1 is 3. Another example is LCA of nodes 5 and 4 is 5, since a node can be a descendant of itself according to the LCA definition.
+     *
+     * @param root
+     * @param p
+     * @param q
+     * @return
+     */
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null || root == p || root == q) return root;
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+        return left == null ? right : right == null ? left : root;
+    }
+
+    int pInorder;   // index of inorder array
+    int pPostorder; // index of postorder array
+
+    private TreeNode buildTree(int[] inorder, int[] postorder, TreeNode end) {
+        if (pPostorder < 0) {
+            return null;
+        }
+
+        // create root node
+        TreeNode n = new TreeNode(postorder[pPostorder--]);
+
+        // if right node exist, create right subtree
+        if (inorder[pInorder] != n.val) {
+            n.right = buildTree(inorder, postorder, n);
+        }
+
+        pInorder--;
+
+        // if left node exist, create left subtree
+        if ((end == null) || (inorder[pInorder] != end.val)) {
+            n.left = buildTree(inorder, postorder, end);
+        }
+
+        return n;
+    }
+
+    /**
+     * Given inorder and postorder traversal of a tree, construct the binary tree.
+     * TODO
+     *
+     * @param inorder
+     * @param postorder
+     * @return
+     */
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        pInorder = inorder.length - 1;
+        pPostorder = postorder.length - 1;
+
+        return buildTree(inorder, postorder, null);
+    }
+
+    /**
+     * Given an array S of n integers, find three integers in S such that the sum is closest to a given number, target. Return the sum of the three integers. You may assume that each input would have exactly one solution.
+     * <p>
+     * For example, given array S = {-1 2 1 -4}, and target = 1.
+     * <p>
+     * The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int result = Integer.MAX_VALUE;
+        int i = 0;
+        while (i < nums.length - 2) {
+            int k = i + 1, l = nums.length - 1;
+            while (k < l) {
+                int sum = nums[i] + nums[l] + nums[k];
+                if (sum < target) {
+                    k++;
+                } else {
+                    l--;
+                }
+                if (result == Integer.MAX_VALUE) {
+                    result = sum;
+                } else {
+                    result = Math.abs(result - target) < Math.abs(sum - target) ? result : sum;
+                }
+            }
+            i++;
+        }
+        return result;
     }
 
     public static void main(String[] args) {
-        System.out.println(new Medium().isValidSerialization("9,3,4,#,#,1,#,#,#,2,#,6,#,#"));
+        TreeNode root = new TreeNode(1);
+        TreeNode node = new TreeNode(2);
+        root.left = node;
+
+        System.out.println(new Medium().lowestCommonAncestor(root, root, node));
 //        System.out.println(new Medium().subsetsWithDup(new int[]{1, 1, 2, 2}));
 //        System.out.println(new Medium().uniquePathsWithObstacles(new int[][]{{0, 1}}));
 
