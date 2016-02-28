@@ -65,10 +65,7 @@ public class MyHashTable<K, V> {
         if (size == capacity) {
             rehash();
         }
-        int hash = key.hashCode() % capacity;
-        while (table[hash] != null && table[hash].getKey() != key) {
-            hash = (hash + 1) % capacity;
-        }
+        int hash = hash(key);
         HashEntry entry = new HashEntry(key, value);
         table[hash] = entry;
         size++;
