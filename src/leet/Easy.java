@@ -1888,8 +1888,59 @@ public class Easy {
         }
     }
 
+    public static class ValidWordAbbr {
+
+        Map<String,Boolean> map=new HashMap<>();
+        Set<String> set=new HashSet<>();
+
+        public ValidWordAbbr(String[] dictionary) {
+            for(String word: dictionary){
+                if(set.add(word)){
+                    int length=word.length();
+                    if(length>2){
+                        String abbr=String.valueOf(word.charAt(0))+(length-2)+String.valueOf(word.charAt(length-1));
+                        map.put(abbr,map.get(abbr)==null?true:false);
+                    }else{
+                        map.put(word,map.get(word)==null?true:false);
+                    }
+                }
+            }
+        }
+
+        public boolean isUnique(String word) {
+            int length=word.length();
+            String abbr=length>2?(String.valueOf(word.charAt(0))+(length-2)+String.valueOf(word.charAt(length-1))):word;
+            if((set.contains(word)&&map.get(abbr))||map.get(abbr)==null){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+
+    public class NumArray {
+
+        private int[] arr;
+
+        public NumArray(int[] nums) {
+            arr=new int[nums.length];
+            for(int i=0;i<nums.length;i++){
+                if(i==0){
+                    arr[i]=nums[i];
+                }else{
+                    arr[i]=arr[i-1]+nums[i];
+                }
+            }
+        }
+
+        public int sumRange(int i, int j) {
+            return arr[j]-arr[i];
+        }
+    }
+
 
     public static void main(String[] args) {
-        new Easy().rotate(new int[]{1, 2}, 1);
+        ValidWordAbbr validWordAbbr=new ValidWordAbbr(new String[]{"dog"});
+        validWordAbbr.isUnique("dig");
     }
 }
