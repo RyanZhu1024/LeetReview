@@ -2394,27 +2394,60 @@ public class Medium {
         int[][] dp;
 
         public NumMatrix(int[][] matrix) {
-            dp=new int[matrix.length+1][matrix[0].length+1];
+            dp = new int[matrix.length + 1][matrix[0].length + 1];
             for (int i = 0; i < matrix.length; i++) {
                 for (int j = 0; j < matrix[0].length; j++) {
-                    dp[i+1][j+1]=dp[i+1][j]+dp[i][j+1]+matrix[i][j]-dp[i][j];
+                    dp[i + 1][j + 1] = dp[i + 1][j] + dp[i][j + 1] + matrix[i][j] - dp[i][j];
                 }
             }
         }
 
         public int sumRegion(int row1, int col1, int row2, int col2) {
-            return dp[row2+1][col2+1]-dp[row1][col2+1]-dp[row2+1][col1]+dp[row1][col1];
+            return dp[row2 + 1][col2 + 1] - dp[row1][col2 + 1] - dp[row2 + 1][col1] + dp[row1][col1];
         }
     }
 
+    /**
+     * Given a string, find the length of the longest substring without repeating characters. For example, the longest substring without repeating letters for "abcabcbb" is "abc", which the length is 3. For "bbbbb" the longest substring is "b", with the length of 1.
+     *
+     * @param s
+     * @return
+     */
+    public int lengthOfLongestSubstring(String s) {
+
+        if (s == null || s.isEmpty()) return 0;
+        if (s.length() == 1) return 1;
+        Map<Character, Integer> table = new HashMap<>();
+        int slow = 0, fast = 1, ll = 1;
+        table.put(s.charAt(slow), slow);
+        while (fast < s.length()) {
+            if (table.get(s.charAt(fast)) == null || table.get(s.charAt(fast)) < slow) {
+                table.put(s.charAt(fast), fast);
+                fast++;
+                ll=Math.max(ll,fast-slow);
+            } else {
+                int dupIdx = table.get(s.charAt(fast));
+                slow = dupIdx + 1;
+            }
+        }
+        return ll;
+    }
+
+    public String reverseWords(String s) {
+        String[] arr=s.trim().split(" ");
+        if(arr.length==0) return "";
+        StringBuilder sb=new StringBuilder();
+        for (int i = arr.length-1; i >=0; i--) {
+            if(!arr[i].trim().isEmpty()){
+                sb.append(arr[i].trim());
+                sb.append(" ");
+            }
+        }
+        return sb.toString().trim();
+    }
+
+
     public static void main(String[] args) {
-        TreeNode root = new TreeNode(1);
-        TreeNode node = new TreeNode(2);
-        root.left = node;
-
-        System.out.println(new Medium().lowestCommonAncestor(root, root, node));
-//        System.out.println(new Medium().subsetsWithDup(new int[]{1, 1, 2, 2}));
-//        System.out.println(new Medium().uniquePathsWithObstacles(new int[][]{{0, 1}}));
-
+        System.out.println(new Medium().lengthOfLongestSubstring("c"));
     }
 }
