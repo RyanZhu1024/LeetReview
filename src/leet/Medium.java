@@ -587,27 +587,31 @@ public class Medium {
      * @return
      */
     public List<List<Integer>> permute(int[] nums) {
-        return permute(nums, nums.length - 1);
-    }
-
-    private List<List<Integer>> permute(int[] nums, int k) {
-        List<List<Integer>> result = new ArrayList<>();
-        if (k == 0) {
-            List<Integer> list = new ArrayList<>();
-            list.add(nums[k]);
-            result.add(list);
-            return result;
-        }
-        List<List<Integer>> preList = permute(nums, k - 1);
-        for (List<Integer> pres : preList) {
-            for (int i = 0; i <= k; i++) {
-                List<Integer> group = new ArrayList<>(pres);
-                group.add(i, nums[k]);
-                result.add(group);
-            }
-        }
+        List<List<Integer>> result=new LinkedList<>();
+        if(nums==null||nums.length==0) return result;
+        List<Integer> cur=new LinkedList<>();
+        boolean visited[]=new boolean[nums.length];
+        Arrays.fill(visited,false);
+        permuteDFS(result,cur,nums,visited);
         return result;
     }
+
+    private void permuteDFS(List<List<Integer>> result, List<Integer> cur, int[] nums, boolean[] visited) {
+        if(cur.size()==nums.length){
+            result.add(new LinkedList<>(cur));
+            return;
+        }
+        for (int i = 0; i < nums.length; i++) {
+            if(!visited[i]) {
+                ((LinkedList) cur).offer(nums[i]);
+                visited[i] = true;
+                permuteDFS(result,cur,nums,visited);
+                visited[i]=false;
+                ((LinkedList)cur).removeLast();
+            }
+        }
+    }
+
 
     /**
      * Given a linked list, swap every two adjacent nodes and return its head.
@@ -2424,7 +2428,7 @@ public class Medium {
             if (table.get(s.charAt(fast)) == null || table.get(s.charAt(fast)) < slow) {
                 table.put(s.charAt(fast), fast);
                 fast++;
-                ll=Math.max(ll,fast-slow);
+                ll = Math.max(ll, fast - slow);
             } else {
                 int dupIdx = table.get(s.charAt(fast));
                 slow = dupIdx + 1;
@@ -2434,11 +2438,11 @@ public class Medium {
     }
 
     public String reverseWords(String s) {
-        String[] arr=s.trim().split(" ");
-        if(arr.length==0) return "";
-        StringBuilder sb=new StringBuilder();
-        for (int i = arr.length-1; i >=0; i--) {
-            if(!arr[i].trim().isEmpty()){
+        String[] arr = s.trim().split(" ");
+        if (arr.length == 0) return "";
+        StringBuilder sb = new StringBuilder();
+        for (int i = arr.length - 1; i >= 0; i--) {
+            if (!arr[i].trim().isEmpty()) {
                 sb.append(arr[i].trim());
                 sb.append(" ");
             }
@@ -2446,8 +2450,125 @@ public class Medium {
         return sb.toString().trim();
     }
 
+    /**
+     * Given an array S of n integers, are there elements a, b, c, and d in S such that a + b + c + d = target? Find all unique quadruplets in the array which gives the sum of target.
+     * <p>
+     * Note:
+     * Elements in a quadruplet (a,b,c,d) must be in non-descending order. (ie, a ≤ b ≤ c ≤ d)
+     * The solution set must not contain duplicate quadruplets.
+     * For example, given array S = {1 0 -1 0 -2 2}, and target = 0.
+     * <p>
+     * A solution set is:
+     * (-1,  0, 0, 1)
+     * (-2, -1, 1, 2)
+     * (-2,  0, 0, 2)
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        Arrays.sort(nums);
+        List<List<Integer>> result = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
+            for (int j = i + 1; j < nums.length; j++) {
+                if (j > i + 1 && nums[j] == nums[j - 1]) continue;
+                twoSum(nums, i, j, (target - nums[i] - nums[j]), result);
+            }
+        }
+        return result;
+    }
+
+    void twoSum(int[] nums, int idx1, int idx2, int target, List<List<Integer>> result) {
+        int i = idx2 + 1, j = nums.length - 1;
+        while (i < j) {
+            int temp = nums[i] + nums[j];
+            if (temp > target) {
+                j--;
+            } else if (temp < target) {
+                i++;
+            } else {
+                List<Integer> subset = new ArrayList<>();
+                subset.add(nums[idx1]);
+                subset.add(nums[idx2]);
+                subset.add(nums[i]);
+                subset.add(nums[j]);
+                result.add(subset);
+                i++;
+                j--;
+                while (i < j && nums[i] == nums[i - 1]) i++;
+                while (i < j && nums[j] == nums[j + 1]) j--;
+            }
+        }
+    }
+
+    public List<Integer> majorityElement(int[] nums) {
+        if (nums.length == 0) return new ArrayList<>();
+        int candi1 = 0, candi2 = 0, count1 = 0, count2 = 0;
+        for (int n : nums) {
+            if (n == candi1) {
+                count1++;
+            } else if (n == candi2) {
+                count2++;
+            } else if (count1 == 0) {
+                candi1 = n;
+                count1 = 1;
+            } else if (count2 == 0) {
+                candi2 = n;
+                count2 = 1;
+            } else {
+                count1--;
+                count2--;
+            }
+        }
+        int sum1=0,sum2=0;
+        for(int n:nums){
+            if(n==candi1){
+                sum1++;
+            }
+            if(n==candi2){
+                sum2++;
+            }
+        }
+        List<Integer> list=new ArrayList<>();
+        if(sum1>nums.length/3) list.add(candi1);
+        if(sum2>nums.length/3&&candi1!=candi2) list.add(candi2);
+        return list;
+    }
+
+    /**
+     * k out of n combinations
+     * @param n
+     * @param k
+     * @return
+     */
+    public LinkedList<LinkedList<Integer>> combinations(int n,int k){
+        LinkedList<LinkedList<Integer>> result=new LinkedList<>();
+        if(n<k||n<=0) return result;
+        LinkedList<Integer> list=new LinkedList<>();
+        DFS(result,list,n,k,1);
+        return result;
+    }
+
+    public void DFS(LinkedList<LinkedList<Integer>> result, LinkedList<Integer> curr, int n, int k, int level){
+        if(curr.size()==k){
+            result.offer(new LinkedList<>(curr));
+            return;
+        }
+        if(curr.size()>k){
+            return;
+        }
+        for (int i = level; i <= n; i++) {
+            curr.offer(i);
+            DFS(result,curr,n,k,i+1);
+            curr.removeLast();
+        }
+    }
+
 
     public static void main(String[] args) {
-        System.out.println(new Medium().lengthOfLongestSubstring("c"));
+        Medium m=new Medium();
+        System.out.println(m.permute(new int[]{1,2,3}));
     }
 }

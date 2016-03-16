@@ -1,5 +1,6 @@
 package leet;
 
+
 import java.util.LinkedList;
 
 /**
@@ -104,9 +105,40 @@ public class Hard {
         return root;
     }
 
+    public int candy(int[] ratings) {
+        int[] candies=new int[ratings.length];
+        candies[0]=1;
+        for(int i=1;i<ratings.length;i++){
+            if(ratings[i]>ratings[i-1]){
+                candies[i]=candies[i-1]+1;
+            }
+            else if(ratings[i]==ratings[i-1]){
+                candies[i]=candies[i-1];
+            }else{
+                int j=i+1;
+                int count=1;
+                while(j<ratings.length&&ratings[j]<ratings[j-1]){
+                    j++;
+                    count++;
+                }
+                if(count>=candies[i-1]){
+                    candies[i-1]=count+1;
+                }
+                for(int m=i;m<j;m++){
+                    candies[m]=count;
+                    count--;
+                }
+                i=j-1;
+            }
+        }
+        int sum=0;
+        for(int c:candies){
+            sum+=c;
+        }
+        return sum;
+    }
+
     public static void main(String[] args) {
-        Hard h=new Hard();
-        String s=h.serialize(new TreeNode(1));
-        h.deserialize(s);
+        System.out.println(new Hard().candy(new int[]{1,2,2}));
     }
 }
