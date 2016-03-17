@@ -662,31 +662,16 @@ public class Easy {
      * @return
      */
     public int removeElement(int[] nums, int val) {
-        int size = nums.length;
-        if (size == 1) {
-            return nums[0] == val ? 0 : 1;
-        }
-        if (size == 0) {
-            return 0;
-        }
-        int i = 0, j = size - 1, length = 0;
-        while (true) {
-            while (i < size && nums[i] != val) {
-                i++;
-                length++;
+        if (nums == null || nums.length == 0) return 0;
+        int j = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == val) {
+                continue;
             }
-            while (j >= 0 && nums[j] == val) {
-                j--;
-            }
-            if (i > j) {
-                break;
-            } else {
-                int temp = nums[j];
-                nums[j] = nums[i];
-                nums[i] = temp;
-            }
+            nums[j] = nums[i];
+            j++;
         }
-        return length;
+        return j;
     }
 
     /**
@@ -747,23 +732,18 @@ public class Easy {
      * @return
      */
     public int removeDuplicates(int[] nums) {
-        if (nums.length == 0) return 0;
-        if (nums.length == 1) return 1;
-        int i = 0, j = 1;
-        int size = nums.length;
-        while (i < nums.length && j < nums.length) {
-            if (nums[i] == nums[j]) {
-                j++;
-                size--;
-            } else {
-                int temp = nums[i + 1];
-                nums[i + 1] = nums[j];
-                nums[j] = temp;
-                i++;
-                j++;
-            }
+        if (nums == null || nums.length == 0) {
+            return 0;
         }
-        return size;
+        int j = 0;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] == nums[j]) {
+                continue;
+            }
+            nums[j + 1] = nums[i];
+            j++;
+        }
+        return j + 1;
     }
 
     /**
@@ -836,28 +816,22 @@ public class Easy {
      */
     public List<List<Integer>> generate(int numRows) {
         List<List<Integer>> result = new LinkedList<>();
-        for (int i = 0; i < numRows; i++) {
+        for (int i = 1; i <= numRows; i++) {
             List<Integer> temp = new ArrayList<>();
-            if (result.size() == 0) {
+            if (i == 1) {
+                temp.add(1);
+                result.add(temp);
+            } else if (i == 2) {
+                temp.add(1);
                 temp.add(1);
                 result.add(temp);
             } else {
-                List<Integer> content = result.get(result.size() - 1);
-                if (content.size() == 1) {
-                    temp.add(1);
-                    temp.add(1);
-                    result.add(temp);
-                } else {
-                    temp.add(1);
-                    int m = 0, n = 1;
-                    while (n < content.size()) {
-                        temp.add(content.get(m) + content.get(n));
-                        m++;
-                        n++;
-                    }
-                    temp.add(1);
-                    result.add(temp);
+                temp.add(1);
+                for (int j = 1; j < i - 1; j++) {
+                    temp.add(result.get(i - 2).get(j - 1) + result.get(i - 2).get(j));
                 }
+                temp.add(1);
+                result.add(temp);
             }
         }
         return result;
@@ -885,24 +859,18 @@ public class Easy {
      * @return
      */
     public List<Integer> getRow(int rowIndex) {
-        List<Integer> result = new ArrayList<>();
-        for (int i = 0; i <= rowIndex; i++) {
-            if (i == 0) {
-                result.add(1);
-            } else if (i == 1) {
-                result.add(1);
-            } else {
-                int size = result.size();
-                int pre = result.get(0);
-                for (int j = 1; j < size; j++) {
-                    int temp = result.get(j);
-                    result.set(j, result.get(j) + pre);
-                    pre = temp;
-                }
-                result.add(1);
+        int[] array = new int[rowIndex + 1];
+        Arrays.fill(array, 1);
+        for (int i = 1; i <= rowIndex; i++) {
+            for (int j = i - 1; j >= 1; j--) {
+                array[j] = array[j] + array[j - 1];
             }
         }
-        return result;
+        List<Integer> integers=new ArrayList<>(array.length);
+        for (int i : array) {
+            integers.add(i);
+        }
+        return integers;
     }
 
     /**
@@ -1022,17 +990,25 @@ public class Easy {
      * @param n
      */
     public void merge(int[] nums1, int m, int[] nums2, int n) {
-        int i = m - 1;
-        int j = n - 1;
-        int k = m + n - 1;
-        while (i >= 0 && j >= 0) {
-            if (nums1[i] > nums2[j])
-                nums1[k--] = nums1[i--];
-            else
-                nums1[k--] = nums2[j--];
+        int k=m+n-1,i=m-1,j=n-1;
+        while(k>=0){
+            if(i>=0&&j>=0) {
+                if (nums1[i] > nums2[j]) {
+                    nums1[k] = nums1[i];
+                    i--;
+                } else {
+                    nums1[k] = nums2[j];
+                    j--;
+                }
+            }else if(i>=0){
+                nums1[k]=nums1[i];
+                i--;
+            }else if(j>=0){
+                nums1[k]=nums2[j];
+                j--;
+            }
+            k--;
         }
-        while (j >= 0)
-            nums1[k--] = nums2[j--];
     }
 
     /**
@@ -1866,7 +1842,7 @@ public class Easy {
 
     public void rotateWithoutExtraSpace(int[] nums, int k) {
 
-        if(nums == null || nums.length < 2){
+        if (nums == null || nums.length < 2) {
             return;
         }
 
@@ -1877,9 +1853,9 @@ public class Easy {
 
     }
 
-    private void reverse(int[] nums, int i, int j){
+    private void reverse(int[] nums, int i, int j) {
         int tmp = 0;
-        while(i < j){
+        while (i < j) {
             tmp = nums[i];
             nums[i] = nums[j];
             nums[j] = tmp;
@@ -1890,29 +1866,29 @@ public class Easy {
 
     public static class ValidWordAbbr {
 
-        Map<String,Boolean> map=new HashMap<>();
-        Set<String> set=new HashSet<>();
+        Map<String, Boolean> map = new HashMap<>();
+        Set<String> set = new HashSet<>();
 
         public ValidWordAbbr(String[] dictionary) {
-            for(String word: dictionary){
-                if(set.add(word)){
-                    int length=word.length();
-                    if(length>2){
-                        String abbr=String.valueOf(word.charAt(0))+(length-2)+String.valueOf(word.charAt(length-1));
-                        map.put(abbr,map.get(abbr)==null?true:false);
-                    }else{
-                        map.put(word,map.get(word)==null?true:false);
+            for (String word : dictionary) {
+                if (set.add(word)) {
+                    int length = word.length();
+                    if (length > 2) {
+                        String abbr = String.valueOf(word.charAt(0)) + (length - 2) + String.valueOf(word.charAt(length - 1));
+                        map.put(abbr, map.get(abbr) == null ? true : false);
+                    } else {
+                        map.put(word, map.get(word) == null ? true : false);
                     }
                 }
             }
         }
 
         public boolean isUnique(String word) {
-            int length=word.length();
-            String abbr=length>2?(String.valueOf(word.charAt(0))+(length-2)+String.valueOf(word.charAt(length-1))):word;
-            if((set.contains(word)&&map.get(abbr))||map.get(abbr)==null){
+            int length = word.length();
+            String abbr = length > 2 ? (String.valueOf(word.charAt(0)) + (length - 2) + String.valueOf(word.charAt(length - 1))) : word;
+            if ((set.contains(word) && map.get(abbr)) || map.get(abbr) == null) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
         }
@@ -1923,24 +1899,38 @@ public class Easy {
         private int[] arr;
 
         public NumArray(int[] nums) {
-            arr=new int[nums.length];
-            for(int i=0;i<nums.length;i++){
-                if(i==0){
-                    arr[i]=nums[i];
-                }else{
-                    arr[i]=arr[i-1]+nums[i];
+            arr = new int[nums.length];
+            for (int i = 0; i < nums.length; i++) {
+                if (i == 0) {
+                    arr[i] = nums[i];
+                } else {
+                    arr[i] = arr[i - 1] + nums[i];
                 }
             }
         }
 
         public int sumRange(int i, int j) {
-            return arr[j]-arr[i];
+            return arr[j] - arr[i];
         }
+    }
+
+    public int[] twoSum(int[] nums, int target) {
+        Map<Integer,Integer> map=new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            map.put(nums[i],i);
+        }
+        for (int i = 0; i < nums.length; i++) {
+            Integer index=map.get(target-nums[i]);
+            if(index!=null&&index!=i){
+                return new int[]{index,i};
+            }
+        }
+        return null;
     }
 
 
     public static void main(String[] args) {
-        ValidWordAbbr validWordAbbr=new ValidWordAbbr(new String[]{"dog"});
+        ValidWordAbbr validWordAbbr = new ValidWordAbbr(new String[]{"dog"});
         validWordAbbr.isUnique("dig");
     }
 }

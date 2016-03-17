@@ -403,30 +403,21 @@ public class Medium {
      * @return
      */
     public int findMin(int[] nums) {
-        int left = 0;
-        int right = nums.length - 1;
-        int mid = 0;
-
-        while (left < right) {
-
-            //the subarray [left, right] is sorted perfectly
-            if (nums[left] < nums[right]) return nums[left];
-
-            mid = (left + right) >> 1;
-
-            if (nums[mid] >= nums[left]) {
-                //subarray [left, mid] is sorted
-                //but we have checked above that nums[left] is not the smallest element
-                //so continue with subarray [mid + 1, right]
-                left = mid + 1;
-            } else {
-                //subarray [mid + 1, right] is sorted
-                //so the rotation is in [left, mid]
-                right = mid;
+        if(nums.length==1)return nums[0];
+        if(nums.length==2)return Math.min(nums[0],nums[1]);
+        int left=0,right=nums.length-1;
+        while(left<right){
+            if(nums[left]<nums[right]){
+                return nums[left];
+            }
+            int mid=left+(right-left)/2;
+            if(nums[mid]<nums[left]){
+                right=mid;
+            }else{
+                left=mid;
             }
         }
-
-        return nums[left];
+        return Math.min(nums[left],nums[right]);
     }
 
     /**
@@ -587,27 +578,27 @@ public class Medium {
      * @return
      */
     public List<List<Integer>> permute(int[] nums) {
-        List<List<Integer>> result=new LinkedList<>();
-        if(nums==null||nums.length==0) return result;
-        List<Integer> cur=new LinkedList<>();
-        boolean visited[]=new boolean[nums.length];
-        Arrays.fill(visited,false);
-        permuteDFS(result,cur,nums,visited);
+        List<List<Integer>> result = new LinkedList<>();
+        if (nums == null || nums.length == 0) return result;
+        List<Integer> cur = new LinkedList<>();
+        boolean visited[] = new boolean[nums.length];
+        Arrays.fill(visited, false);
+        permuteDFS(result, cur, nums, visited);
         return result;
     }
 
     private void permuteDFS(List<List<Integer>> result, List<Integer> cur, int[] nums, boolean[] visited) {
-        if(cur.size()==nums.length){
+        if (cur.size() == nums.length) {
             result.add(new LinkedList<>(cur));
             return;
         }
         for (int i = 0; i < nums.length; i++) {
-            if(!visited[i]) {
+            if (!visited[i]) {
                 ((LinkedList) cur).offer(nums[i]);
                 visited[i] = true;
-                permuteDFS(result,cur,nums,visited);
-                visited[i]=false;
-                ((LinkedList)cur).removeLast();
+                permuteDFS(result, cur, nums, visited);
+                visited[i] = false;
+                ((LinkedList) cur).removeLast();
             }
         }
     }
@@ -1230,32 +1221,26 @@ public class Medium {
      * @return
      */
     public int removeDuplicates(int[] nums) {
-        if (nums == null || nums.length == 0) return 0;
-        if (nums.length == 1) return 1;
-        if (nums.length == 2) return 2;
-        int i = 0, j = 1, size = nums.length;
-        boolean dup = false;
-        while (i < nums.length && j < nums.length) {
-            if (nums[i] == nums[j] && !dup && j == i + 1) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int j = 0, counter = 0;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] == nums[j]) {
+                counter++;
+                if (counter < 2) {
+                    nums[j + 1] = nums[i];
+                    j++;
+                } else {
+                    continue;
+                }
+            } else {
+                nums[j + 1] = nums[i];
                 j++;
-                i++;
-                dup = true;
-            } else if (nums[i] == nums[j] && !dup && j > i + 1) {
-                swap(nums, i + 1, j);
-                j++;
-                i++;
-                dup = true;
-            } else if (nums[i] == nums[j] && dup) {
-                size--;
-                j++;
-            } else if (nums[i] < nums[j]) {
-                swap(nums, i + 1, j);
-                i++;
-                j++;
-                dup = false;
+                counter = 0;
             }
         }
-        return size;
+        return j + 1;
     }
 
     /**
@@ -2370,25 +2355,62 @@ public class Medium {
      * @return
      */
     public int threeSumClosest(int[] nums, int target) {
+        int distance = Integer.MAX_VALUE,finalSum=0;
+        if (nums.length == 0 || nums.length == 1 || nums.length == 2) return 0;
         Arrays.sort(nums);
-        int result = Integer.MAX_VALUE;
-        int i = 0;
-        while (i < nums.length - 2) {
-            int k = i + 1, l = nums.length - 1;
-            while (k < l) {
-                int sum = nums[i] + nums[l] + nums[k];
-                if (sum < target) {
-                    k++;
-                } else {
-                    l--;
-                }
-                if (result == Integer.MAX_VALUE) {
-                    result = sum;
-                } else {
-                    result = Math.abs(result - target) < Math.abs(sum - target) ? result : sum;
+        for (int i = 0; i < nums.length; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
+            int j = i + 1, k = nums.length - 1;
+            while (j < k) {
+                int sum = nums[i] + nums[j] + nums[k];
+                int tmpDis=Math.abs(sum-target);
+                if(sum>target){
+                    if(tmpDis<distance){
+                        distance=tmpDis;
+                        finalSum=sum;
+                    }
+                    k--;
+                }else if(sum<target){
+                    if(tmpDis<distance){
+                        distance=tmpDis;
+                        finalSum=sum;
+                    }
+                    j++;
+                }else{
+                    return sum;
                 }
             }
-            i++;
+        }
+        return finalSum;
+    }
+
+    public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        if (nums.length == 0 || nums.length == 1 || nums.length == 2) return result;
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
+            int j = i + 1, k = nums.length - 1;
+            while (j < k) {
+                int sum = nums[i] + nums[j] + nums[k];
+                if (sum > 0) {
+                    k--;
+                    while (k > j && nums[k] == nums[k + 1]) k--;
+                } else if (sum < 0) {
+                    j++;
+                    while (j < k && nums[j] == nums[j - 1]) j++;
+                } else {
+                    List<Integer> set = new ArrayList<>();
+                    set.add(nums[i]);
+                    set.add(nums[j]);
+                    set.add(nums[k]);
+                    result.add(set);
+                    j++;
+                    k--;
+                    while (j < k && nums[j] == nums[j - 1]) j++;
+                    while (k > j && nums[k] == nums[k + 1]) k--;
+                }
+            }
         }
         return result;
     }
@@ -2522,53 +2544,54 @@ public class Medium {
                 count2--;
             }
         }
-        int sum1=0,sum2=0;
-        for(int n:nums){
-            if(n==candi1){
+        int sum1 = 0, sum2 = 0;
+        for (int n : nums) {
+            if (n == candi1) {
                 sum1++;
             }
-            if(n==candi2){
+            if (n == candi2) {
                 sum2++;
             }
         }
-        List<Integer> list=new ArrayList<>();
-        if(sum1>nums.length/3) list.add(candi1);
-        if(sum2>nums.length/3&&candi1!=candi2) list.add(candi2);
+        List<Integer> list = new ArrayList<>();
+        if (sum1 > nums.length / 3) list.add(candi1);
+        if (sum2 > nums.length / 3 && candi1 != candi2) list.add(candi2);
         return list;
     }
 
     /**
      * k out of n combinations
+     *
      * @param n
      * @param k
      * @return
      */
-    public LinkedList<LinkedList<Integer>> combinations(int n,int k){
-        LinkedList<LinkedList<Integer>> result=new LinkedList<>();
-        if(n<k||n<=0) return result;
-        LinkedList<Integer> list=new LinkedList<>();
-        DFS(result,list,n,k,1);
+    public LinkedList<LinkedList<Integer>> combinations(int n, int k) {
+        LinkedList<LinkedList<Integer>> result = new LinkedList<>();
+        if (n < k || n <= 0) return result;
+        LinkedList<Integer> list = new LinkedList<>();
+        DFS(result, list, n, k, 1);
         return result;
     }
 
-    public void DFS(LinkedList<LinkedList<Integer>> result, LinkedList<Integer> curr, int n, int k, int level){
-        if(curr.size()==k){
+    public void DFS(LinkedList<LinkedList<Integer>> result, LinkedList<Integer> curr, int n, int k, int level) {
+        if (curr.size() == k) {
             result.offer(new LinkedList<>(curr));
             return;
         }
-        if(curr.size()>k){
+        if (curr.size() > k) {
             return;
         }
         for (int i = level; i <= n; i++) {
             curr.offer(i);
-            DFS(result,curr,n,k,i+1);
+            DFS(result, curr, n, k, i + 1);
             curr.removeLast();
         }
     }
 
 
     public static void main(String[] args) {
-        Medium m=new Medium();
-        System.out.println(m.permute(new int[]{1,2,3}));
+        Medium m = new Medium();
+        System.out.println(m.permute(new int[]{1, 2, 3}));
     }
 }
