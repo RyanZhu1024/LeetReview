@@ -1928,9 +1928,17 @@ public class Easy {
         return null;
     }
 
+    public boolean isPowerOfThree(int n) {
+        while(n!=1){
+            if(n%3!=0) return false;
+            n/=3;
+        }
+        return true;
+    }
+
 
     public static void main(String[] args) {
-        ValidWordAbbr validWordAbbr = new ValidWordAbbr(new String[]{"dog"});
-        validWordAbbr.isUnique("dig");
+        Easy e=new Easy();
+        System.out.println(Integer.MAX_VALUE);
     }
 }

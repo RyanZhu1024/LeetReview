@@ -1,7 +1,9 @@
 package leet;
 
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -210,6 +212,34 @@ public class Hard {
             }
         }
         return max;
+    }
+
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> result=new ArrayList<>();
+        if(root==null) return result;
+        Stack<TreeNode> stack=new Stack<>();
+        stack.push(root);
+        TreeNode pre=null;
+        while(!stack.isEmpty()){
+            TreeNode node=stack.peek();
+            if((node.left==null&&node.right==null)||(pre!=null&&(pre==node.left||pre==node.right))){
+                stack.pop();
+                result.add(node.val);
+                pre=node;
+            }else{
+                if(node.right!=null){
+                    stack.push(node.right);
+                }
+                if(node.left!=null){
+                    stack.push(node.left);
+                }
+            }
+        }
+        return result;
+    }
+
+    public void recoverTree(TreeNode root) {
+
     }
 
     public static void main(String[] args) {

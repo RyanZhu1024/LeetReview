@@ -1758,6 +1758,28 @@ public class Medium {
         }
     }
 
+
+    public void flattern(TreeNode root){
+        if(root==null)return;
+        Stack<TreeNode> stack=new Stack<>();
+        stack.push(root);
+        TreeNode pre=null;
+        while(!stack.isEmpty()){
+            TreeNode node=stack.pop();
+            if(node.left!=null) {
+                stack.push(node.left);
+            }
+            if(node.right!=null) {
+                stack.push(node.right);
+            }
+            if(pre==null) pre=node;
+            else{
+                pre.right=node;
+                pre.left=null;
+            }
+        }
+    }
+
     public TreeNode flattenHelper(TreeNode root) {
         if (root.left == null && root.right == null) {
             return root;
@@ -2187,6 +2209,7 @@ public class Medium {
         return serHelper(preorder, stack);
     }
 
+
     public boolean serHelper(String preorder, Stack<String> stack) {
         String[] orders = preorder.split(",");
         for (int i = 0; i < orders.length; i++) {
@@ -2589,9 +2612,72 @@ public class Medium {
         }
     }
 
+    public int[] searchRange(int[] nums, int target) {
+        int left=0,right=nums.length-1;
+        int[] result=new int[]{-1,-1};
+        if(nums.length==0) return result;
+        while(left<=right){
+            int mid=left+(right-left)/2;
+            if(nums[mid]>=target){
+                right=mid;
+            }else{
+                left=mid;
+            }
+        }
+        if(left<nums.length&&nums[left]==target){
+            result[0]=left;
+        }else{
+            return result;
+        }
+        right=nums.length-1;
+        while(left<=right){
+            int mid=left+(right-left)/2;
+            if(nums[mid]<=target){
+                left=mid;
+            }else{
+                right=mid;
+            }
+        }
+        result[1]=right;
+        return result;
+    }
+
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        List<List<Integer>> result=new ArrayList<>();
+        if(root==null) return result;
+        pathDfs(result,new ArrayList<>(),sum,root);
+        return result;
+    }
+
+    public void pathDfs(List<List<Integer>> result,List<Integer> cur,int sum,TreeNode root){
+        if(root.left==null&&root.right==null&&root.val==sum){
+            cur.add(root.val);
+            result.add(cur);
+            return;
+        }else{
+            if(root.val>sum) return;
+            cur.add(root.val);
+            if(root.left!=null){
+                pathDfs(result,new ArrayList<>(cur),sum-root.val,root.left);
+            }
+            if(root.right!=null){
+                pathDfs(result,new ArrayList<>(cur),sum-root.val,root.right);
+            }
+        }
+    }
+
+    public boolean isValidBST(TreeNode root) {
+        return isValid(root,Long.MIN_VALUE,Long.MAX_VALUE);
+    }
+
+    public boolean isValid(TreeNode node,long min, long max){
+        if(node==null) return true;
+        if(node.val>=max||node.val<=min) return false;
+        return isValid(node.left,min,node.val) && isValid(node.right,node.val,max);
+    }
 
     public static void main(String[] args) {
         Medium m = new Medium();
-        System.out.println(m.permute(new int[]{1, 2, 3}));
+        System.out.println(m.searchRange(new int[]{1},1));
     }
 }
