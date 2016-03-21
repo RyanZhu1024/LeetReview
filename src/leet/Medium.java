@@ -2676,6 +2676,20 @@ public class Medium {
         return isValid(node.left,min,node.val) && isValid(node.right,node.val,max);
     }
 
+    public boolean verifyPreorder(int[] preorder) {
+        if(preorder==null) return true;
+        Stack<Integer> stack=new Stack<>();
+        int low = Integer.MIN_VALUE;
+        for (int p : preorder) {
+            if(p<low)return false;
+            while(!stack.isEmpty()&&p>stack.peek()){
+                low=stack.pop();
+            }
+            stack.push(p);
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
         Medium m = new Medium();
         System.out.println(m.searchRange(new int[]{1},1));
