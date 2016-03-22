@@ -180,7 +180,7 @@ public class Hard {
     }
 
     public int maximalRectangle(char[][] matrix) {
-        if(matrix.length==0)return 0;
+        if (matrix.length == 0) return 0;
         int m = matrix.length, n = matrix[0].length;
         int[][] heightTable = new int[m][n + 1];
         for (int i = 0; i < m; i++) {
@@ -215,22 +215,22 @@ public class Hard {
     }
 
     public List<Integer> postorderTraversal(TreeNode root) {
-        List<Integer> result=new ArrayList<>();
-        if(root==null) return result;
-        Stack<TreeNode> stack=new Stack<>();
+        List<Integer> result = new ArrayList<>();
+        if (root == null) return result;
+        Stack<TreeNode> stack = new Stack<>();
         stack.push(root);
-        TreeNode pre=null;
-        while(!stack.isEmpty()){
-            TreeNode node=stack.peek();
-            if((node.left==null&&node.right==null)||(pre!=null&&(pre==node.left||pre==node.right))){
+        TreeNode pre = null;
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.peek();
+            if ((node.left == null && node.right == null) || (pre != null && (pre == node.left || pre == node.right))) {
                 stack.pop();
                 result.add(node.val);
-                pre=node;
-            }else{
-                if(node.right!=null){
+                pre = node;
+            } else {
+                if (node.right != null) {
                     stack.push(node.right);
                 }
-                if(node.left!=null){
+                if (node.left != null) {
                     stack.push(node.left);
                 }
             }
@@ -239,10 +239,89 @@ public class Hard {
     }
 
     public void recoverTree(TreeNode root) {
+        if (root == null) return;
+        TreeNode cur = root, pre = null, first = null, second = null, preCur = null;
+        while (cur != null) {
+            if (cur.left == null) {
+                if (found(preCur, cur)) {
+                    if (first == null) {
+                        first = preCur;
+                    }
+                    second = cur;
+                }
+                preCur = cur;
+                cur = cur.right;
+            } else {
+                pre = cur.left;
+                while (pre.right != null && pre.right != cur) {
+                    pre = pre.right;
+                }
+                if (pre.right == null) {
+                    pre.right = cur;
+                    cur = cur.left;
+                } else if (pre.right == cur) {
+                    if (found(preCur, cur)) {
+                        if (first == null) {
+                            first = preCur;
+                        }
+                        second = cur;
+                    }
+                    preCur = cur;
+                    pre.right = null;
+                    cur = cur.right;
+                }
+            }
+        }
+        if (first != null && second != null) {
+            int temp = first.val;
+            first.val = second.val;
+            second.val = temp;
+        }
+    }
 
+    public boolean found(TreeNode pre, TreeNode cur) {
+        return pre != null && pre.val > cur.val;
+    }
+
+    public void morrisTraversal(TreeNode root) {
+        if (root == null) return;
+        TreeNode cur = root;
+        TreeNode pre = null;
+        while (cur != null) {
+            if (cur.left == null) {
+                System.out.println(cur.val);
+                cur = cur.right;
+            } else if (cur.left != null) {
+                pre = findPre(cur);
+                if (pre.right == null) {
+                    pre.right = cur;
+                    cur = cur.left;
+                } else if (pre == cur) {
+                    pre.right = null;
+                    System.out.println(cur.val);
+                    cur = cur.right;
+                }
+            }
+        }
+    }
+
+    public TreeNode findPre(TreeNode node) {
+        TreeNode temp = node.left;
+        while (temp.right != null) {
+            temp = temp.right;
+        }
+        return temp;
     }
 
     public static void main(String[] args) {
-        System.out.println(new Hard().candy(new int[]{1, 2, 2}));
+        TreeNode n1 = new TreeNode(1);
+        TreeNode n2 = new TreeNode(2);
+        TreeNode n3 = new TreeNode(3);
+        n1.left = n2;
+        n1.right = n3;
+        new Hard().recoverTree(n1);
+        System.out.println(n1.val);
+        System.out.println(n2.val);
+        System.out.println(n3.val);
     }
 }
