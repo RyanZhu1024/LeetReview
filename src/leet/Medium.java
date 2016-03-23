@@ -101,6 +101,17 @@ public class Medium {
         return total;
     }
 
+    public int maxProfitOnece(int[] prices) {
+        if (prices == null || prices.length <= 1) return 0;
+        int buy = prices[0], sell = prices[1];
+        int max = sell - buy;
+        for (int i = 2; i < prices.length; i++) {
+            buy = Math.min(buy, prices[i - 1]);
+            max = Math.max(prices[i] - buy, max);
+        }
+        return max;
+    }
+
     /**
      * Given an array of n integers where n > 1, nums, return an array output such that output[i] is equal to the product of all the elements of nums except nums[i].
      * <p>
@@ -390,6 +401,32 @@ public class Medium {
         return max;
     }
 
+    public int maxSubArrayLogn(int[] nums) {
+        return divide(nums, 0, nums.length - 1, Integer.MIN_VALUE);
+    }
+
+    public int divide(int[] nums, int start, int end, int tmax) {
+        if (start > end) {
+            return Integer.MIN_VALUE;
+        }
+        int mid = start + (end - start) / 2;
+        int lmax = divide(nums, start, mid - 1, tmax);
+        int rmax = divide(nums, mid + 1, end, tmax);
+        tmax = Math.max(tmax, Math.max(lmax, rmax));
+        int sum = 0, mlmax = 0;
+        for (int i = mid - 1; i >= start; i--) {
+            sum += nums[i];
+            mlmax = Math.max(mlmax, sum);
+        }
+        sum = 0;
+        int mrmax = 0;
+        for (int i = mid + 1; i <= end; i++) {
+            sum += nums[i];
+            mrmax = Math.max(mrmax, sum);
+        }
+        return Math.max(tmax, nums[mid] + mlmax + mrmax);
+    }
+
     /**
      * Suppose a sorted array is rotated at some pivot unknown to you beforehand.
      * <p>
@@ -403,21 +440,21 @@ public class Medium {
      * @return
      */
     public int findMin(int[] nums) {
-        if(nums.length==1)return nums[0];
-        if(nums.length==2)return Math.min(nums[0],nums[1]);
-        int left=0,right=nums.length-1;
-        while(left<right){
-            if(nums[left]<nums[right]){
+        if (nums.length == 1) return nums[0];
+        if (nums.length == 2) return Math.min(nums[0], nums[1]);
+        int left = 0, right = nums.length - 1;
+        while (left < right) {
+            if (nums[left] < nums[right]) {
                 return nums[left];
             }
-            int mid=left+(right-left)/2;
-            if(nums[mid]<nums[left]){
-                right=mid;
-            }else{
-                left=mid;
+            int mid = left + (right - left) / 2;
+            if (nums[mid] < nums[left]) {
+                right = mid;
+            } else {
+                left = mid;
             }
         }
-        return Math.min(nums[left],nums[right]);
+        return Math.min(nums[left], nums[right]);
     }
 
     /**
@@ -1759,23 +1796,23 @@ public class Medium {
     }
 
 
-    public void flattern(TreeNode root){
-        if(root==null)return;
-        Stack<TreeNode> stack=new Stack<>();
+    public void flattern(TreeNode root) {
+        if (root == null) return;
+        Stack<TreeNode> stack = new Stack<>();
         stack.push(root);
-        TreeNode pre=null;
-        while(!stack.isEmpty()){
-            TreeNode node=stack.pop();
-            if(node.left!=null) {
+        TreeNode pre = null;
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            if (node.left != null) {
                 stack.push(node.left);
             }
-            if(node.right!=null) {
+            if (node.right != null) {
                 stack.push(node.right);
             }
-            if(pre==null) pre=node;
-            else{
-                pre.right=node;
-                pre.left=null;
+            if (pre == null) pre = node;
+            else {
+                pre.right = node;
+                pre.left = null;
             }
         }
     }
@@ -2378,7 +2415,7 @@ public class Medium {
      * @return
      */
     public int threeSumClosest(int[] nums, int target) {
-        int distance = Integer.MAX_VALUE,finalSum=0;
+        int distance = Integer.MAX_VALUE, finalSum = 0;
         if (nums.length == 0 || nums.length == 1 || nums.length == 2) return 0;
         Arrays.sort(nums);
         for (int i = 0; i < nums.length; i++) {
@@ -2386,20 +2423,20 @@ public class Medium {
             int j = i + 1, k = nums.length - 1;
             while (j < k) {
                 int sum = nums[i] + nums[j] + nums[k];
-                int tmpDis=Math.abs(sum-target);
-                if(sum>target){
-                    if(tmpDis<distance){
-                        distance=tmpDis;
-                        finalSum=sum;
+                int tmpDis = Math.abs(sum - target);
+                if (sum > target) {
+                    if (tmpDis < distance) {
+                        distance = tmpDis;
+                        finalSum = sum;
                     }
                     k--;
-                }else if(sum<target){
-                    if(tmpDis<distance){
-                        distance=tmpDis;
-                        finalSum=sum;
+                } else if (sum < target) {
+                    if (tmpDis < distance) {
+                        distance = tmpDis;
+                        finalSum = sum;
                     }
                     j++;
-                }else{
+                } else {
                     return sum;
                 }
             }
@@ -2613,85 +2650,108 @@ public class Medium {
     }
 
     public int[] searchRange(int[] nums, int target) {
-        int left=0,right=nums.length-1;
-        int[] result=new int[]{-1,-1};
-        if(nums.length==0) return result;
-        while(left<=right){
-            int mid=left+(right-left)/2;
-            if(nums[mid]>=target){
-                right=mid;
-            }else{
-                left=mid;
+        int left = 0, right = nums.length - 1;
+        int[] result = new int[]{-1, -1};
+        if (nums.length == 0) return result;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] >= target) {
+                right = mid;
+            } else {
+                left = mid;
             }
         }
-        if(left<nums.length&&nums[left]==target){
-            result[0]=left;
-        }else{
+        if (left < nums.length && nums[left] == target) {
+            result[0] = left;
+        } else {
             return result;
         }
-        right=nums.length-1;
-        while(left<=right){
-            int mid=left+(right-left)/2;
-            if(nums[mid]<=target){
-                left=mid;
-            }else{
-                right=mid;
+        right = nums.length - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] <= target) {
+                left = mid;
+            } else {
+                right = mid;
             }
         }
-        result[1]=right;
+        result[1] = right;
         return result;
     }
 
     public List<List<Integer>> pathSum(TreeNode root, int sum) {
-        List<List<Integer>> result=new ArrayList<>();
-        if(root==null) return result;
-        pathDfs(result,new ArrayList<>(),sum,root);
+        List<List<Integer>> result = new ArrayList<>();
+        if (root == null) return result;
+        pathDfs(result, new ArrayList<>(), sum, root);
         return result;
     }
 
-    public void pathDfs(List<List<Integer>> result,List<Integer> cur,int sum,TreeNode root){
-        if(root.left==null&&root.right==null&&root.val==sum){
+    public void pathDfs(List<List<Integer>> result, List<Integer> cur, int sum, TreeNode root) {
+        if (root.left == null && root.right == null && root.val == sum) {
             cur.add(root.val);
             result.add(cur);
             return;
-        }else{
-            if(root.val>sum) return;
+        } else {
+            if (root.val > sum) return;
             cur.add(root.val);
-            if(root.left!=null){
-                pathDfs(result,new ArrayList<>(cur),sum-root.val,root.left);
+            if (root.left != null) {
+                pathDfs(result, new ArrayList<>(cur), sum - root.val, root.left);
             }
-            if(root.right!=null){
-                pathDfs(result,new ArrayList<>(cur),sum-root.val,root.right);
+            if (root.right != null) {
+                pathDfs(result, new ArrayList<>(cur), sum - root.val, root.right);
             }
         }
     }
 
     public boolean isValidBST(TreeNode root) {
-        return isValid(root,Long.MIN_VALUE,Long.MAX_VALUE);
+        return isValid(root, Long.MIN_VALUE, Long.MAX_VALUE);
     }
 
-    public boolean isValid(TreeNode node,long min, long max){
-        if(node==null) return true;
-        if(node.val>=max||node.val<=min) return false;
-        return isValid(node.left,min,node.val) && isValid(node.right,node.val,max);
+    public boolean isValid(TreeNode node, long min, long max) {
+        if (node == null) return true;
+        if (node.val >= max || node.val <= min) return false;
+        return isValid(node.left, min, node.val) && isValid(node.right, node.val, max);
     }
 
     public boolean verifyPreorder(int[] preorder) {
-        if(preorder==null) return true;
-        Stack<Integer> stack=new Stack<>();
+        if (preorder == null) return true;
+        Stack<Integer> stack = new Stack<>();
         int low = Integer.MIN_VALUE;
         for (int p : preorder) {
-            if(p<low)return false;
-            while(!stack.isEmpty()&&p>stack.peek()){
-                low=stack.pop();
+            if (p < low) return false;
+            while (!stack.isEmpty() && p > stack.peek()) {
+                low = stack.pop();
             }
             stack.push(p);
         }
         return true;
     }
 
+    public int maxProduct(int[] nums) {
+        /*
+        maxDP[i+1]=max(maxDP[i]*nums[i+1],maxDP[i],minDP[i]*nums[i+1]
+        minDP[i+1]=min(minDP[i]*nums[i+1],minDP[i],maxDP[i]*nums[i+1]
+         */
+        if (nums.length == 0) {
+            return 0;
+        }
+        int maxherepre = nums[0];
+        int minherepre = nums[0];
+        int maxsofar = nums[0];
+        int maxhere, minhere;
+
+        for (int i = 1; i < nums.length; i++) {
+            maxhere = Math.max(Math.max(maxherepre * nums[i], minherepre * nums[i]), nums[i]);
+            minhere = Math.min(Math.min(maxherepre * nums[i], minherepre * nums[i]), nums[i]);
+            maxsofar = Math.max(maxhere, maxsofar);
+            maxherepre = maxhere;
+            minherepre = minhere;
+        }
+        return maxsofar;
+    }
+
     public static void main(String[] args) {
         Medium m = new Medium();
-        System.out.println(m.searchRange(new int[]{1},1));
+        System.out.println(m.maxSubArrayLogn(new int[]{8, -19, 5, -4, 20}));
     }
 }

@@ -313,15 +313,29 @@ public class Hard {
         return temp;
     }
 
+    public int maxProfit(int[] prices) {
+        if(prices==null||prices.length<=1)return 0;
+        int minP=prices[0],sum=0;
+        int[] table=new int[prices.length];
+        for (int i = 1; i < prices.length; i++) {
+            minP=Math.min(minP,prices[i-1]);
+            sum=Math.max(sum,prices[i]-minP);
+            table[i]=sum;
+        }
+        int maxS=prices[prices.length-1],max2=Integer.MIN_VALUE;
+        for (int i = prices.length-2; i >=0; i--) {
+            maxS=Math.max(maxS,prices[i+1]);
+            max2=Math.max(max2,maxS-prices[i]);
+            if(max2>0){
+                table[i]=table[i]+max2;
+                sum=Math.max(sum,table[i]);
+            }
+        }
+        return sum>0?sum:0;
+    }
+
     public static void main(String[] args) {
-        TreeNode n1 = new TreeNode(1);
-        TreeNode n2 = new TreeNode(2);
-        TreeNode n3 = new TreeNode(3);
-        n1.left = n2;
-        n1.right = n3;
-        new Hard().recoverTree(n1);
-        System.out.println(n1.val);
-        System.out.println(n2.val);
-        System.out.println(n3.val);
+        Hard h=new Hard();
+        System.out.println(h.maxProfit(new int[]{2,1,2,0,1}));
     }
 }
