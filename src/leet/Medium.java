@@ -2750,8 +2750,89 @@ public class Medium {
         return maxsofar;
     }
 
+    public int triangle(int[][] triangle) {
+        int row = triangle.length;
+        int[] table = new int[triangle[row - 1].length];
+        for (int i = 0; i < table.length; i++) {
+            table[i] = triangle[row - 1][i];
+        }
+        for (int i = row - 2; i >= 0; i--) {
+            for (int j = 0; j <= i; j++) {
+                table[j] = triangle[i][j] + Math.min(table[j], table[j + 1]);
+            }
+        }
+        return table[0];
+    }
+
+    int numSquaresDP(int n) {
+        if (n == 0 || n == 1) return 1;
+        int[] dp = new int[n + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+        for (int i = 1; i <= n; i++) {
+            int sqrt = (int) Math.sqrt(i);
+            for (int j = 1; j <= sqrt; j++) {
+                dp[i] = Math.min(dp[i], Math.min(dp[i - 1] + 1, dp[i - j * j] + 1));
+            }
+        }
+        return dp[n];
+    }
+
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+        int gasSum=0,costSum=0;
+        for (int ga : gas) {
+            gasSum+=ga;
+        }
+        for (int i : cost) {
+            costSum+=i;
+        }
+        if(gasSum<costSum) return -1;
+        else{
+            int i=0,rest=0,s=0;
+            while(i<gas.length){
+                rest+=gas[i]-cost[i];
+                if(rest<0){
+                    s=i+1;
+                    rest=0;
+                }
+                i++;
+            }
+            return s;
+        }
+    }
+
+
+    public boolean canJump(int[] nums) {
+        if (nums == null || nums.length == 0) return true;
+        int step = nums[0];
+        if (step < 1 && nums.length > 1) return false;
+        for (int i = 1; i < nums.length; i++) {
+            step--;
+            if (step < 0) return false;
+            step = Math.max(step, nums[i]);
+        }
+        return true;
+    }
+
+    public boolean wordBreak(String s, Set<String> wordDict) {
+        boolean[] dp=new boolean[s.length()+1];
+        dp[0]=true;
+        for (int i = 1; i <= s.length(); i++) {
+            for (int j = i-1; j >= 0; j--) {
+                if(dp[j]&&wordDict.contains(s.substring(j,i))){
+                    dp[i]=true;
+                    break;
+                }
+            }
+        }
+        return dp[s.length()];
+    }
+
     public static void main(String[] args) {
         Medium m = new Medium();
-        System.out.println(m.maxSubArrayLogn(new int[]{8, -19, 5, -4, 20}));
+        Set<String> set=new HashSet<>();
+        set.add("leet");
+        set.add("code");
+        System.out.println(m.wordBreak("leetcode",set));
     }
 }

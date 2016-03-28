@@ -1,15 +1,23 @@
 package leet;
 
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Created by RyanZhu on 1/20/16.
  */
 public class Hard {
+
+    public static class ListNode {
+        int val;
+        ListNode next;
+
+        ListNode(int x) {
+            val = x;
+        }
+
+    }
+
     public static class TreeNode {
         int val;
         TreeNode left;
@@ -140,6 +148,28 @@ public class Hard {
         }
         return sum;
     }
+
+    public int candyAnother(int[] ratings) {
+        if (ratings == null || ratings.length == 0) return 0;
+        int[] candies = new int[ratings.length];
+        Arrays.fill(candies, 1);
+        for (int i = 1; i < candies.length; i++) {
+            if (ratings[i] > ratings[i - 1]) {
+                candies[i] = candies[i - 1] + 1;
+            }
+        }
+        for (int i = candies.length - 1; i >= 1; i--) {
+            if (ratings[i - 1] > ratings[i] && candies[i - 1] <= candies[i]) {
+                candies[i - 1] = candies[i] + 1;
+            }
+        }
+        int sum = 0;
+        for (int candy : candies) {
+            sum += candy;
+        }
+        return sum;
+    }
+
 
     public int findMin(int[] nums) {
         int start = 0, stop = nums.length - 1;
@@ -314,28 +344,138 @@ public class Hard {
     }
 
     public int maxProfit(int[] prices) {
-        if(prices==null||prices.length<=1)return 0;
-        int minP=prices[0],sum=0;
-        int[] table=new int[prices.length];
+        if (prices == null || prices.length <= 1) return 0;
+        int minP = prices[0], sum = 0;
+        int[] table = new int[prices.length];
         for (int i = 1; i < prices.length; i++) {
-            minP=Math.min(minP,prices[i-1]);
-            sum=Math.max(sum,prices[i]-minP);
-            table[i]=sum;
+            minP = Math.min(minP, prices[i - 1]);
+            sum = Math.max(sum, prices[i] - minP);
+            table[i] = sum;
         }
-        int maxS=prices[prices.length-1],max2=Integer.MIN_VALUE;
-        for (int i = prices.length-2; i >=0; i--) {
-            maxS=Math.max(maxS,prices[i+1]);
-            max2=Math.max(max2,maxS-prices[i]);
-            if(max2>0){
-                table[i]=table[i]+max2;
-                sum=Math.max(sum,table[i]);
+        int maxS = prices[prices.length - 1], max2 = Integer.MIN_VALUE;
+        for (int i = prices.length - 2; i >= 0; i--) {
+            maxS = Math.max(maxS, prices[i + 1]);
+            max2 = Math.max(max2, maxS - prices[i]);
+            if (max2 > 0) {
+                table[i] = table[i] + max2;
+                sum = Math.max(sum, table[i]);
             }
         }
-        return sum>0?sum:0;
+        return sum > 0 ? sum : 0;
+    }
+
+    public int jump(int[] nums) {
+        int i = 0, steps = 0, cur = 0, next = 0;
+        while (i < nums.length) {
+            if (cur >= nums.length - 1) break;
+            while (i <= cur) {
+                next = Math.max(next, nums[i] + i);
+                i++;
+            }
+            steps++;
+            cur = next;
+        }
+        return steps;
+    }
+
+    public List<String> wordBreak2(String s, Set<String> wordDict) {
+        //TODO
+    }
+
+    public List<String> wordBreak(String s, Set<String> wordDict) {
+        List<Integer>[] starts = new List[s.length() + 1]; // valid start positions
+        starts[0] = new ArrayList<Integer>();
+
+        int maxLen = getMaxLen(wordDict);
+        for (int i = 1; i <= s.length(); i++) {
+            for (int j = i - 1; j >= i - maxLen && j >= 0; j--) {
+                if (starts[j] == null) continue;
+                String word = s.substring(j, i);
+                if (wordDict.contains(word)) {
+                    if (starts[i] == null) {
+                        starts[i] = new ArrayList<Integer>();
+                    }
+                    starts[i].add(j);
+                }
+            }
+        }
+
+        List<String> rst = new ArrayList<>();
+        if (starts[s.length()] == null) {
+            return rst;
+        }
+
+        dfs(rst, "", s, starts, s.length());
+        return rst;
+    }
+
+
+    private void dfs(List<String> rst, String path, String s, List<Integer>[] starts, int end) {
+        if (end == 0) {
+            rst.add(path.substring(1));
+            return;
+        }
+
+        for (Integer start : starts[end]) {
+            String word = s.substring(start, end);
+            dfs(rst, " " + word + path, s, starts, start);
+        }
+    }
+
+    private int getMaxLen(Set<String> wordDict) {
+        int max = 0;
+        for (String s : wordDict) {
+            max = Math.max(max, s.length());
+        }
+        return max;
+    }
+
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (lists == null || lists.length == 0) return null;
+        int n=lists.length;
+        int left=0,right=n-1;
+        while(right>0) {
+            while (left < right) {
+                lists[left] = merge(lists[left], lists[right]);
+                left++;
+                right--;
+            }
+            left = 0;
+        }
+        return lists[0];
+    }
+
+    public ListNode merge(ListNode l1, ListNode l2) {
+        ListNode head = new ListNode(Integer.MIN_VALUE);
+        ListNode node = head;
+        while (l1 != null && l2 != null) {
+            if (l1.val < l2.val) {
+                node.next = l1;
+                l1 = l1.next;
+                node = node.next;
+            } else {
+                node.next = l2;
+                l2 = l2.next;
+                node = node.next;
+            }
+        }
+        if(l1!=null){
+            node.next=l1;
+        }else{
+            node.next=l2;
+        }
+        return head.next;
     }
 
     public static void main(String[] args) {
-        Hard h=new Hard();
-        System.out.println(h.maxProfit(new int[]{2,1,2,0,1}));
+        Hard h = new Hard();
+        String s = "aaaaaaaaaaaa";
+        Set<String> set = new HashSet<>();
+        set.add("a");
+        set.add("aaa");
+        set.add("aa");
+        set.add("aaaa");
+        set.add("aaaaa");
+        System.out.println(h.wordBreak(s, set));
     }
 }
