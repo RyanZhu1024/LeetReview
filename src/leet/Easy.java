@@ -866,7 +866,7 @@ public class Easy {
                 array[j] = array[j] + array[j - 1];
             }
         }
-        List<Integer> integers=new ArrayList<>(array.length);
+        List<Integer> integers = new ArrayList<>(array.length);
         for (int i : array) {
             integers.add(i);
         }
@@ -990,9 +990,9 @@ public class Easy {
      * @param n
      */
     public void merge(int[] nums1, int m, int[] nums2, int n) {
-        int k=m+n-1,i=m-1,j=n-1;
-        while(k>=0){
-            if(i>=0&&j>=0) {
+        int k = m + n - 1, i = m - 1, j = n - 1;
+        while (k >= 0) {
+            if (i >= 0 && j >= 0) {
                 if (nums1[i] > nums2[j]) {
                     nums1[k] = nums1[i];
                     i--;
@@ -1000,11 +1000,11 @@ public class Easy {
                     nums1[k] = nums2[j];
                     j--;
                 }
-            }else if(i>=0){
-                nums1[k]=nums1[i];
+            } else if (i >= 0) {
+                nums1[k] = nums1[i];
                 i--;
-            }else if(j>=0){
-                nums1[k]=nums2[j];
+            } else if (j >= 0) {
+                nums1[k] = nums2[j];
                 j--;
             }
             k--;
@@ -1915,30 +1915,68 @@ public class Easy {
     }
 
     public int[] twoSum(int[] nums, int target) {
-        Map<Integer,Integer> map=new HashMap<>();
+        Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < nums.length; i++) {
-            map.put(nums[i],i);
+            map.put(nums[i], i);
         }
         for (int i = 0; i < nums.length; i++) {
-            Integer index=map.get(target-nums[i]);
-            if(index!=null&&index!=i){
-                return new int[]{index,i};
+            Integer index = map.get(target - nums[i]);
+            if (index != null && index != i) {
+                return new int[]{index, i};
             }
         }
         return null;
     }
 
     public boolean isPowerOfThree(int n) {
-        while(n!=1){
-            if(n%3!=0) return false;
-            n/=3;
+        while (n != 1) {
+            if (n % 3 != 0) return false;
+            n /= 3;
         }
         return true;
     }
 
+    public List<String> generatePossibleNextMoves(String s) {
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < s.length() - 1; i++) {
+            if (s.charAt(i) == s.charAt(i + 1)) {
+                String temp = s.charAt(i) == '+' ? "--" : "++";
+                result.add(s.substring(0, i) + temp + s.substring(i + 2));
+            }
+        }
+        return result;
+    }
+
+    public boolean canAttendMeetings(Interval[] intervals) {
+        Collections.sort(Arrays.asList(intervals), new Comparator<Interval>() {
+            @Override
+            public int compare(Interval o1, Interval o2) {
+                return o1.start-o2.start;
+            }
+        });
+        for (int i = 0; i < intervals.length-1; i++) {
+            if(intervals[i].end>intervals[i+1].start) return false;
+        }
+        return true;
+    }
+
+    public class Interval {
+        int start;
+        int end;
+
+        Interval() {
+            start = 0;
+            end = 0;
+        }
+
+        Interval(int s, int e) {
+            start = s;
+            end = e;
+        }
+    }
 
     public static void main(String[] args) {
-        Easy e=new Easy();
-        System.out.println(Integer.MAX_VALUE);
+        Easy e = new Easy();
+        System.out.println(e.generatePossibleNextMoves("--"));
     }
 }

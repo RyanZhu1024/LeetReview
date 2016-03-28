@@ -380,6 +380,7 @@ public class Hard {
 
     public List<String> wordBreak2(String s, Set<String> wordDict) {
         //TODO
+        return null;
     }
 
     public List<String> wordBreak(String s, Set<String> wordDict) {

@@ -2828,11 +2828,61 @@ public class Medium {
         return dp[s.length()];
     }
 
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        int promo=0;
+        ListNode dummy=new ListNode(0);
+        ListNode node=dummy;
+        while(l1!=null&&l2!=null){
+            int sum=l1.val+l2.val+promo;
+            promo=sum/10;
+            node.next=new ListNode(sum%10);
+            node=node.next;
+            l1=l1.next;
+            l2=l2.next;
+        }
+        while(l1!=null){
+            int sum=promo+l1.val;
+            promo=sum/10;
+            node.next=new ListNode(sum%10);
+            node=node.next;
+            l1=l1.next;
+        }
+        while(l2!=null){
+            int sum=promo+l2.val;
+            promo=sum/10;
+            node.next=new ListNode(sum%10);
+            node=node.next;
+            l2=l2.next;
+        }
+        if(promo==1){
+            node.next=new ListNode(1);
+        }
+        return dummy.next;
+    }
+
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        ListNode dummy=new ListNode(0);
+        dummy.next=head;
+        ListNode p=dummy;
+        for (int i = 1; i < m; i++) {
+            p=p.next;
+        }
+        ListNode cur=p.next;
+        while(m<n){
+            ListNode next=cur.next;
+            cur.next=next.next;
+            next.next=p.next;
+            p.next=next;
+            m++;
+        }
+        return dummy.next;
+    }
+
     public static void main(String[] args) {
         Medium m = new Medium();
-        Set<String> set=new HashSet<>();
-        set.add("leet");
-        set.add("code");
-        System.out.println(m.wordBreak("leetcode",set));
+        ListNode l1=new ListNode(1);
+        l1.next=new ListNode(8);
+        ListNode l2=new ListNode(0);
+        m.addTwoNumbers(l1,l2);
     }
 }
