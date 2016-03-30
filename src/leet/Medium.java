@@ -2878,11 +2878,145 @@ public class Medium {
         return dummy.next;
     }
 
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if(k<=1||head==null) return head;
+        ListNode dummy=new ListNode(0);
+        dummy.next=head;
+        ListNode p=dummy;
+        ListNode pre=dummy;
+        while(p!=null){
+            pre=p;
+            for (int i = 0; i < k; i++) {
+                p=p.next;
+                if(p==null){
+                    return dummy.next;
+                }
+            }
+            p=reverseBetween(pre,p);
+        }
+        return dummy.next;
+    }
+
+    private ListNode reverseBetween(ListNode pre, ListNode end) {
+        ListNode cur=pre.next;
+        while(pre.next!=end){
+            ListNode next=cur.next;
+            cur.next=next.next;
+            next.next=pre.next;
+            pre.next=next;
+        }
+        return cur;
+    }
+
+    public ListNode sortList(ListNode head) {
+        if(head==null||head.next==null) return head;
+        return sortListHelper(head);
+    }
+
+    public ListNode sortListHelper(ListNode left){
+        if(left==null||left.next==null){
+            return left;
+        }
+        ListNode slow=left;
+        ListNode fast=left;
+        while(fast.next!=null&&fast.next.next!=null){
+            slow=slow.next;
+            fast=fast.next.next;
+        }
+        fast=slow.next;
+        slow.next=null;
+        ListNode l1=sortListHelper(left);
+        ListNode l2=sortListHelper(fast);
+        return merge(l1,l2);
+    }
+
+    private ListNode merge(ListNode l1, ListNode l2) {
+        ListNode dummy=new ListNode(0);
+        ListNode p=dummy;
+        while(l1!=null&&l2!=null){
+            if(l1.val<l2.val){
+                p.next=l1;
+                l1=l1.next;
+            }else{
+                p.next=l2;
+                l2=l2.next;
+            }
+            p=p.next;
+        }
+        if(l1!=null){
+            p.next=l1;
+        }else{
+            p.next=l2;
+        }
+        return dummy.next;
+    }
+
+    public ListNode rotateRight(ListNode head, int k) {
+        if(k==0||head==null) return head;
+        int n=0;
+        ListNode p=head;
+        ListNode pre=null;
+        while(p!=null){
+            n++;
+            pre=p;
+            p=p.next;
+        }
+        int steps=k%n;
+        if(steps==0){
+            return head;
+        }
+        pre.next=head;
+        for (int i = 0; i < n-steps; i++) {
+            pre=pre.next;
+        }
+        ListNode h=pre.next;
+        pre.next=null;
+        return h;
+    }
+
+    public void reorderList(ListNode head) {
+        if(head==null||head.next==null||head.next.next==null) return ;
+        ListNode slow=head,fast=head;
+        while(fast!=null&&fast.next!=null){
+            slow=slow.next;
+            fast=fast.next.next;
+        }
+        ListNode right=slow.next;
+        slow.next=null;
+        fast=reverse(right);
+        ListNode p=head;
+        while(p!=null&&fast!=null){
+            ListNode leftNext=p.next;
+            ListNode rightNext=fast.next;
+            p.next=fast;
+            fast.next=leftNext;
+            p=leftNext;
+            fast=rightNext;
+        }
+    }
+
+    private ListNode reverse(ListNode right) {
+        ListNode pre=null;
+        ListNode p=right;
+        while(p!=null){
+            ListNode next=p.next;
+            p.next=pre;
+            pre=p;
+            p=next;
+        }
+        return pre;
+    }
+
+
     public static void main(String[] args) {
         Medium m = new Medium();
-        ListNode l1=new ListNode(1);
-        l1.next=new ListNode(8);
-        ListNode l2=new ListNode(0);
-        m.addTwoNumbers(l1,l2);
+        ListNode l1=new ListNode(2);
+        l1.next=new ListNode(1);
+//        l1.next.next=new ListNode(3);
+//        l1.next.next.next=new ListNode(4);
+        while(l1!=null){
+            System.out.println(l1.val);
+            l1=l1.next;
+        }
     }
 }

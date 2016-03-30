@@ -572,7 +572,7 @@ public class Easy {
      * @param n
      * @return
      */
-    public boolean isPowerOfTwo(int n) {
+    private boolean isPowerOfTwo(int n) {
         if (n == 1) {
             return true;
         }

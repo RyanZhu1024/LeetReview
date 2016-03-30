@@ -433,9 +433,9 @@ public class Hard {
 
     public ListNode mergeKLists(ListNode[] lists) {
         if (lists == null || lists.length == 0) return null;
-        int n=lists.length;
-        int left=0,right=n-1;
-        while(right>0) {
+        int n = lists.length;
+        int left = 0, right = n - 1;
+        while (right > 0) {
             while (left < right) {
                 lists[left] = merge(lists[left], lists[right]);
                 left++;
@@ -460,23 +460,80 @@ public class Hard {
                 node = node.next;
             }
         }
-        if(l1!=null){
-            node.next=l1;
-        }else{
-            node.next=l2;
+        if (l1 != null) {
+            node.next = l1;
+        } else {
+            node.next = l2;
         }
         return head.next;
     }
 
+
+    private static class RandomListNode {
+        int label;
+        RandomListNode next, random;
+
+        RandomListNode(int x) {
+            this.label = x;
+        }
+    }
+
+
+    public RandomListNode copyRandomList(RandomListNode head) {
+        RandomListNode p = head;
+        RandomListNode dummy = new RandomListNode(0);
+        RandomListNode dm = dummy;
+        Map<RandomListNode, RandomListNode> map = new HashMap<>();
+        while (p != null) {
+            RandomListNode node = map.containsKey(p) ? map.get(p) : new RandomListNode(p.label);
+            if (p.random != null) {
+                RandomListNode random = map.containsKey(p.random) ? map.get(p.random) : new RandomListNode(p.random.label);
+                node.random = random;
+                map.put(p.random, random);
+            }
+            dm.next = node;
+            dm = dm.next;
+            p = p.next;
+        }
+        return dummy.next;
+    }
+
+    private RandomListNode copyRandomList2(RandomListNode head) {
+        RandomListNode p = head;
+        while (p != null) {
+            RandomListNode copy = new RandomListNode(p.label);
+            RandomListNode next = p.next;
+            p.next = copy;
+            copy.next = next;
+            p = next;
+        }
+        p = head;
+        while (p != null) {
+            if (p.random != null) {
+                p.next.random = p.random.next;
+            }
+            p = p.next.next;
+        }
+        p=head;
+        RandomListNode dummy=new RandomListNode(0);
+        RandomListNode q=dummy;
+        while(p!=null){
+            RandomListNode next=p.next.next;
+            q.next=p.next;
+            p.next=next;
+            p=next;
+            q=q.next;
+        }
+        return dummy.next;
+    }
+
+
     public static void main(String[] args) {
         Hard h = new Hard();
-        String s = "aaaaaaaaaaaa";
-        Set<String> set = new HashSet<>();
-        set.add("a");
-        set.add("aaa");
-        set.add("aa");
-        set.add("aaaa");
-        set.add("aaaaa");
-        System.out.println(h.wordBreak(s, set));
+        RandomListNode r1 = new RandomListNode(-1);
+//        RandomListNode r2 = new RandomListNode(1);
+//        r1.next = r2;
+        RandomListNode r3 = h.copyRandomList2(r1);
+        System.out.println(r3);
     }
 }
