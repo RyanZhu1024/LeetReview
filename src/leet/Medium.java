@@ -2032,6 +2032,43 @@ public class Medium {
         return result;
     }
 
+    public ArrayList<ArrayList<Integer>> subsetsWithDupRecursive(ArrayList<Integer> S) {
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        if(S==null || S.size() == 0) return result;
+        Collections.sort(S);
+        dfs(result, S, 0);
+        ArrayList<Integer> empty = new ArrayList<>();
+        result.add(empty);
+        return result;
+    }
+
+    void dfs(ArrayList<ArrayList<Integer>> result, ArrayList<Integer> S, int index){
+        if(index==S.size()) return;
+        int initIndex = result.size();
+        ArrayList<ArrayList<Integer>> copy = new ArrayList<>(result);
+        for(ArrayList<Integer> item: copy){
+            ArrayList<Integer> cp = new ArrayList<>(item);
+            cp.add(S.get(index));
+            result.add(cp);
+        }
+        ArrayList<Integer> item = new ArrayList<>();
+        item.add(S.get(index));
+        result.add(item);
+
+        while(index< S.size()-1&&S.get(index).equals(S.get(index+1))){
+            int i = initIndex;
+            ArrayList<ArrayList<Integer>> copy1 = new ArrayList<>(result);
+            for(; i < copy1.size();i++){
+                ArrayList<Integer> temp = new ArrayList<>(copy1.get(i));
+                temp.add(S.get(index));
+                result.add(temp);
+            }
+            initIndex = i;
+            index++;
+        }
+        dfs(result,S,index+1);
+    }
+
     public int rob(int[] nums) {
         if (nums.length == 1) return nums[0];
         return Math.max(rob(nums, 0, nums.length - 2), rob(nums, 1, nums.length - 1));
@@ -3040,6 +3077,7 @@ public class Medium {
 
     public static void main(String[] args) {
         Medium m = new Medium();
+
         System.out.println(m.strStr("abcdefg", "abc"));
     }
 }
