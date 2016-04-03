@@ -57,7 +57,7 @@ public class Easy {
 
 
     // Definition for a binary tree node.
-    public class TreeNode {
+    public static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;
@@ -1951,11 +1951,11 @@ public class Easy {
         Collections.sort(Arrays.asList(intervals), new Comparator<Interval>() {
             @Override
             public int compare(Interval o1, Interval o2) {
-                return o1.start-o2.start;
+                return o1.start - o2.start;
             }
         });
-        for (int i = 0; i < intervals.length-1; i++) {
-            if(intervals[i].end>intervals[i+1].start) return false;
+        for (int i = 0; i < intervals.length - 1; i++) {
+            if (intervals[i].end > intervals[i + 1].start) return false;
         }
         return true;
     }
@@ -1975,8 +1975,43 @@ public class Easy {
         }
     }
 
+    public int closestValue(TreeNode root, double target) {
+        TreeNode node = root;
+        double delta = Double.MAX_VALUE;
+        TreeNode temp = null;
+        while (node != null) {
+            double d = Math.abs(target - node.val);
+            if (d < delta) {
+                temp = node;
+                delta = d;
+            }
+            if (target > node.val) {
+                node = node.right;
+
+            } else if (target < node.val) {
+                node = node.left;
+            } else return node.val;
+        }
+        return temp.val;
+    }
+
+    public int numWays(int n, int k) {
+        if (k == 0 || n == 0) return 0;
+        int[] dp = new int[n];
+        for (int i = 0; i < n; i++) {
+            if (i == 0) {
+                dp[i] = k;
+            } else if (i == 1) {
+                dp[i] = k * k;
+            } else {
+                dp[i] = dp[i - 1] * (k - 1) + dp[i - 2] * (k - 1);
+            }
+        }
+        return dp[n - 1];
+    }
+
     public static void main(String[] args) {
         Easy e = new Easy();
-        System.out.println(e.generatePossibleNextMoves("--"));
+        System.out.println(e.numWays(2, 46340));
     }
 }

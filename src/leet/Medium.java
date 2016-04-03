@@ -2034,7 +2034,7 @@ public class Medium {
 
     public ArrayList<ArrayList<Integer>> subsetsWithDupRecursive(ArrayList<Integer> S) {
         ArrayList<ArrayList<Integer>> result = new ArrayList<>();
-        if(S==null || S.size() == 0) return result;
+        if (S == null || S.size() == 0) return result;
         Collections.sort(S);
         dfs(result, S, 0);
         ArrayList<Integer> empty = new ArrayList<>();
@@ -2042,11 +2042,11 @@ public class Medium {
         return result;
     }
 
-    void dfs(ArrayList<ArrayList<Integer>> result, ArrayList<Integer> S, int index){
-        if(index==S.size()) return;
+    void dfs(ArrayList<ArrayList<Integer>> result, ArrayList<Integer> S, int index) {
+        if (index == S.size()) return;
         int initIndex = result.size();
         ArrayList<ArrayList<Integer>> copy = new ArrayList<>(result);
-        for(ArrayList<Integer> item: copy){
+        for (ArrayList<Integer> item : copy) {
             ArrayList<Integer> cp = new ArrayList<>(item);
             cp.add(S.get(index));
             result.add(cp);
@@ -2055,10 +2055,10 @@ public class Medium {
         item.add(S.get(index));
         result.add(item);
 
-        while(index< S.size()-1&&S.get(index).equals(S.get(index+1))){
+        while (index < S.size() - 1 && S.get(index).equals(S.get(index + 1))) {
             int i = initIndex;
             ArrayList<ArrayList<Integer>> copy1 = new ArrayList<>(result);
-            for(; i < copy1.size();i++){
+            for (; i < copy1.size(); i++) {
                 ArrayList<Integer> temp = new ArrayList<>(copy1.get(i));
                 temp.add(S.get(index));
                 result.add(temp);
@@ -2066,7 +2066,7 @@ public class Medium {
             initIndex = i;
             index++;
         }
-        dfs(result,S,index+1);
+        dfs(result, S, index + 1);
     }
 
     public int rob(int[] nums) {
@@ -3052,32 +3052,78 @@ public class Medium {
      * @return
      */
     public int strStr(String source, String target) {
-        if(source == null || target == null) return -1;
-        if(target.length() > source.length()) return -1;
-        if(target.length()==0 || source.length() == 0) return 0;
+        if (source == null || target == null) return -1;
+        if (target.length() > source.length()) return -1;
+        if (target.length() == 0 || source.length() == 0) return 0;
         Map<Character, Integer> badMatchTable = new HashMap<>();
         for (int i = 0; i < target.length(); i++) {
             badMatchTable.put(target.charAt(i), Math.max(1, target.length() - 1 - i));
         }
-        badMatchTable.put(target.charAt(target.length()-1),target.length());
+        badMatchTable.put(target.charAt(target.length() - 1), target.length());
         int i = target.length() - 1;
         while (i < source.length()) {
             int j = target.length() - 1, k = i;
-            while (j>=0&&source.charAt(k) == target.charAt(j)) {
+            while (j >= 0 && source.charAt(k) == target.charAt(j)) {
                 j--;
                 k--;
             }
-            if (j == -1) return k+1;
+            if (j == -1) return k + 1;
             else
                 i += badMatchTable.get(source.charAt(i)) == null ? target.length() : badMatchTable.get(source.charAt(i));
         }
         return -1;
     }
 
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        List<List<Integer>> result = new LinkedList<>();
+        if (nums == null || nums.length == 0) return result;
+        List<Integer> cur = new LinkedList<>();
+        boolean[] visited = new boolean[nums.length];
+        Arrays.sort(nums);
+
+        permuteUniqueHelper(result, cur, nums, visited);
+        return result;
+    }
+
+    public void permuteUniqueHelper(List<List<Integer>> result, List<Integer> cur, int[] nums, boolean[] visited) {
+        if (cur.size() == nums.length) {
+            result.add(new LinkedList<>(cur));
+            return;
+        }
+        for (int i = 0; i < nums.length; i++) {
+            if (visited[i]) continue;
+            if (i > 0 && nums[i] == nums[i - 1] && !visited[i - 1]) continue;
+            cur.add(nums[i]);
+            visited[i] = true;
+            permuteUniqueHelper(result, cur, nums, visited);
+            visited[i] = false;
+            cur.remove(cur.size() - 1);
+        }
+    }
+
+    public int threeSumSmaller(int[] nums, int target) {
+        Arrays.sort(nums);
+        int sum = 0;
+        for (int i = 0; i < nums.length; i++) {
+            sum += twoSumSmaller(i + 1, nums, target - nums[i]);
+        }
+        return sum;
+    }
+
+    int twoSumSmaller(int start, int[] nums, int target) {
+        int index=0;
+        for(int i=nums.length-1;i>start;i--){
+            if(nums[i]+nums[start]<target){
+                index=i;
+                break;
+            }
+        }
+        return index==0?0:index-start+1;
+    }
+
 
     public static void main(String[] args) {
         Medium m = new Medium();
-
-        System.out.println(m.strStr("abcdefg", "abc"));
+        System.out.println(m.threeSumSmaller(new int[]{3,1,0,-2}, 4));
     }
 }
