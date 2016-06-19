@@ -3227,6 +3227,54 @@ public class Medium {
     }
 
 
+    Set<Integer> sumd = new HashSet<>();
+    Set<Integer> subd = new HashSet<>();
+
+    public List<List<String>> solveNQueens(int n) {
+        List<List<String>> result = new ArrayList<>();
+        if(n <= 0){
+            return result;
+        }
+        boolean[] cols = new boolean[n];
+        List<String> cur = new ArrayList<>();
+        helper(result, 0, n, cols, cur);
+        return result;
+    }
+    void helper(List<List<String>> result, int row, int n, boolean[] cols, List<String> cur){
+        if(row == n){
+            result.add(new ArrayList<>(cur));
+            return;
+        }
+
+        char[] cs = new char[n];
+        for(int i = 0;i < n;i++){
+            cs[i] = '.';
+        }
+
+        for(int i = 0;i < n;i++){
+            int sum = row + i;
+            int sub = i - row;
+            if(cols[i] || sumd.contains(sum) || subd.contains(sub)){
+                continue;
+            }else{
+                sumd.add(sum);
+                subd.add(sub);
+                cols[i] = true;
+                cs[i] = 'Q';
+                cur.add(new String(cs));
+
+                helper(result, row + 1, n, cols, cur);
+
+                cs[i] = '.';
+                cur.remove(cur.size() - 1);
+                sumd.remove(sum);
+                subd.remove(sub);
+                cols[i] = false;
+            }
+        }
+    }
+
+
     public static void main(String[] args) {
         new Medium().longestConsecutive(new int[]{100,4,200,1,3,2});
     }
