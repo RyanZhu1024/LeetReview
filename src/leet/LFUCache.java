@@ -31,11 +31,11 @@ public class LFUCache {
     // @return nothing
     public void set(int key, int value) {
         // Write your code here
-        // if(map.containsKey(key)){
-        //     map.get(key).freq += 1;
-        //     map.get(key).value = value;
-        //     promoteNode(map.get(key));
-        // }else{
+         if(map.containsKey(key)){
+             map.get(key).freq += 1;
+             map.get(key).value = value;
+             promoteNode(map.get(key));
+         }else{
         Node node = new Node(key,value, 1);
         map.put(key, node);
         if(map.size() > cap){
@@ -53,7 +53,7 @@ public class LFUCache {
             }
         }
         insert(node);
-        // }
+         }
     }
 
     void insert(Node node){
