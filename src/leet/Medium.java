@@ -3276,7 +3276,7 @@ public class Medium {
 
 
     public static void main(String[] args) {
-        new Medium().longestConsecutive(new int[]{100,4,200,1,3,2});
+        new Medium().woodCut(new int[]{232,124,456},7);
     }
 
     public int longestConsecutive(int[] num) {
@@ -3421,6 +3421,42 @@ public class Medium {
             }
             return map.get(node);
         }
+    }
+
+    public int woodCut(int[] L, int k) {
+        // write your code here
+        if(L == null || L.length == 0){
+            return 0;
+        }else{
+            int max = Integer.MIN_VALUE;
+            for(int i : L){
+                max = Math.max(max, i);
+            }
+            int l = 1, r = max;
+            while(l + 1 < r){
+                int mid = l + (r - l) / 2;
+                if(count(L, mid) >= k){
+                    l = mid;
+                }else{
+                    r = mid;
+                }
+            }
+            if(count(L, l) >= k){
+                return l;
+            }else if(count(L, r) >= k){
+                return r;
+            }else{
+                return 0;
+            }
+        }
+    }
+
+    int count(int[] L, int len){
+        int count = 0;
+        for(int l : L){
+            count += l / len;
+        }
+        return count;
     }
 
     static class UndirectedGraphNode {
