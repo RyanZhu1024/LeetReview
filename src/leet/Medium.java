@@ -3032,17 +3032,17 @@ public class Medium {
         }
     }
 
-    private ListNode reverse(ListNode right) {
-        ListNode pre = null;
-        ListNode p = right;
-        while (p != null) {
-            ListNode next = p.next;
-            p.next = pre;
-            pre = p;
-            p = next;
-        }
-        return pre;
-    }
+//    private ListNode reverse(ListNode right) {
+//        ListNode pre = null;
+//        ListNode p = right;
+//        while (p != null) {
+//            ListNode next = p.next;
+//            p.next = pre;
+//            pre = p;
+//            p = next;
+//        }
+//        return pre;
+//    }
 
     /**
      * Boyer–Moore string search algorithm
@@ -3111,14 +3111,119 @@ public class Medium {
     }
 
     int twoSumSmaller(int start, int[] nums, int target) {
-        int index=0;
-        for(int i=nums.length-1;i>start;i--){
-            if(nums[i]+nums[start]<target){
-                index=i;
+        int index = 0;
+        for (int i = nums.length - 1; i > start; i--) {
+            if (nums[i] + nums[start] < target) {
+                index = i;
                 break;
             }
         }
-        return index==0?0:index-start+1;
+        return index == 0 ? 0 : index - start + 1;
+    }
+
+    public ListNode addLists2(ListNode l1, ListNode l2) {
+        // write your code here
+        if (l1 == null) {
+            return l2;
+        }
+        if (l2 == null) {
+            return l1;
+        }
+        ListNode r1 = reverse(l1);
+        ListNode r2 = reverse(l2);
+        int carry = 0;
+        ListNode dummy = new ListNode(0);
+        ListNode dm = dummy;
+        while (r1 != null && r2 != null) {
+            int val = r1.val + r2.val + carry;
+            dm.next = new ListNode(val % 10);
+            carry = (val >= 10) ? 1 : 0;
+            dm = dm.next;
+            r1 = r1.next;
+            r2 = r2.next;
+        }
+        while (r1 != null) {
+            int val = r1.val + carry;
+            dm.next = new ListNode(val % 10);
+            carry = (val >= 10) ? 1 : 0;
+            dm = dm.next;
+            r1 = r1.next;
+        }
+        while (r2 != null) {
+            int val = r2.val + carry;
+            dm.next = new ListNode(val % 10);
+            carry = (val >= 10) ? 1 : 0;
+            dm = dm.next;
+            r2 = r2.next;
+        }
+        if (carry > 0) {
+            dm.next = new ListNode(carry);
+        }
+        return reverse(dummy.next);
+    }
+
+    ListNode reverse(ListNode n) {
+        ListNode pre = null;
+        ListNode node = n;
+        while (node != null) {
+            ListNode next = node.next;
+            node.next = pre;
+            pre = node;
+            node = next;
+        }
+        return pre;
+    }
+
+    public int maxDiffSubArrays(int[] nums) {
+        // write your code here
+        int[] leftMax = new int[nums.length];
+        int[] rightMin = new int[nums.length];
+        int sum = 0, minSum = 0, max = Integer.MIN_VALUE;
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            max = leftMax[i] = Math.max(max, sum - minSum);
+            minSum = Math.min(minSum, sum);
+        }
+
+        sum = 0;
+        int maxSum = 0, min = Integer.MAX_VALUE;
+        for (int i = nums.length - 1; i >= 0; i--) {
+            sum += nums[i];
+            min = rightMin[i] = Math.min(min, sum - maxSum);
+            maxSum = Math.max(maxSum, sum);
+        }
+        int maxDiff = Integer.MIN_VALUE;
+        for (int i = 0; i < nums.length; i++) {
+            maxDiff = Math.max(maxDiff, Math.abs(leftMax[i] - rightMin[i]));
+        }
+        return maxDiff;
+    }
+
+    public int maxSubArray(int[] nums, int k) {
+        // write your code here
+        if (nums == null || nums.length < k) {
+            return 0;
+        }
+        int n = nums.length;
+        int[][][] dp = new int[n + 1][k + 1][2];
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= k; j++) {
+                if (j > i) {
+                    dp[i][j][0] = Integer.MIN_VALUE;
+                    dp[i][j][1] = Integer.MIN_VALUE;
+                }
+            }
+        }
+
+        dp[0][0][0] = 0;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= k; j++) {
+                if (j > i) continue;
+                dp[i][j][0] = Math.max(0, Math.max(dp[i - 1][j][0], dp[i - 1][j][1]));
+                dp[i][j][1] = Math.max(dp[i - 1][j - 1][0], Math.max(dp[i - 1][j][1], dp[i - 1][j - 1][0])) + nums[i - 1];
+            }
+        }
+        return Math.max(dp[n][k][0], dp[n][k][1]);
     }
 
 
@@ -3171,7 +3276,160 @@ public class Medium {
 
 
     public static void main(String[] args) {
-        Medium m = new Medium();
-        System.out.println(m.solveNQueens(4));
+        new Medium().longestConsecutive(new int[]{100,4,200,1,3,2});
+    }
+
+    public int longestConsecutive(int[] num) {
+        // write you code here
+        heapity(num);
+        int local = 1;
+        int global = 1;
+        for(int i = 1;i < num.length;i++){
+            if(num[i] - num[i - 1] == 1){
+                local++;
+            }else if(num[i] == num[i - 1]){
+                //nothing
+            }else{
+                global = Math.max(global, local);
+                local = 1;
+            }
+        }
+        global = Math.max(global,local);
+        return global;
+    }
+
+
+    void heapity(int[] A){
+        for(int i = A.length / 2;i >= 0;i--){
+            int k = i;
+            while(k < A.length){
+                int smallest = k;
+                int left = 2 * k + 1;
+                int right = 2 * k + 2;
+                if(left < A.length && A[left] < A[smallest]){
+                    smallest = left;
+                }
+                if(right < A.length && A[right] < A[smallest]){
+                    smallest = right;
+                }
+                if(smallest == k) break;
+                swap(A, smallest, k);
+//                int temp = A[smallest];
+//                A[smallest] = A[k];
+//                A[k] = temp;
+                k = smallest;
+            }
+        }
+    }
+
+    class Node{
+        String val;
+        List<Node> neighbors;
+        int distance;
+        public Node(String v){
+            this.val = v;
+            this.neighbors = new ArrayList<>();
+            this.distance = 0;
+        }
+    }
+    /**
+     * @param start, a string
+     * @param end, a string
+     * @param dict, a set of string
+     * @return a list of lists of string
+     */
+    public List<List<String>> findLadders(String start, String end, Set<String> dict) {
+        // write your code here
+        Node endNode = new Node(end);
+        Map<String,Node> map = new HashMap<>();
+        map.put(end,endNode);
+        Queue<Node> queue = new LinkedList<>();
+        queue.offer(endNode);
+        while(!queue.isEmpty()){
+            Node node = queue.poll();
+            String val = node.val;
+            for(int i = 0;i < val.length();i++){
+                for(char c = 'a';c <= 'z';c++){
+                    String sub = val.substring(0,i) + c + val.substring(i + 1);
+                    if(!dict.contains(sub)){
+                        continue;
+                    }
+                    if(!map.containsKey(sub)){
+                        Node n = new Node(sub);
+                        n.distance = node.distance + 1;
+                        map.put(sub,n);
+                        queue.offer(n);
+                    }
+                    map.get(sub).neighbors.add(node);
+                }
+            }
+        }
+        Node startNode = map.get(start);
+        List<List<String>> result = new ArrayList<>();
+        List<String> cur = new ArrayList<>();
+        cur.add(start);
+        dfs(startNode, cur, result);
+        return result;
+    }
+
+    void dfs(Node start, List<String> cur, List<List<String>> result){
+        if(start.distance == 0){
+            result.add(new ArrayList<>(cur));
+        }else{
+            for(Node neighbor : start.neighbors){
+                if(neighbor.distance == start.distance - 1){
+                    cur.add(neighbor.val);
+                    dfs(neighbor, cur, result);
+                    cur.remove(cur.size() - 1);
+                }
+            }
+        }
+    }
+
+
+
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        // write your code here
+        if (node == null) {
+            return null;
+        } else {
+            Map<UndirectedGraphNode, UndirectedGraphNode> map = new HashMap<>();
+            Queue<UndirectedGraphNode> q = new LinkedList<>();
+            q.offer(node);
+            while (!q.isEmpty()) {
+                UndirectedGraphNode n = q.poll();
+                UndirectedGraphNode newNode = new UndirectedGraphNode(n.label);
+                map.put(n, newNode);
+                for (UndirectedGraphNode nei : n.neighbors) {
+                    if (!map.containsKey(nei)) {
+                        q.offer(nei);
+                    }
+                }
+            }
+            q.offer(node);
+            Set<UndirectedGraphNode> set = new HashSet<>();
+            while (!q.isEmpty()) {
+                UndirectedGraphNode n = q.poll();
+                UndirectedGraphNode newNode = map.get(n);
+                for (UndirectedGraphNode nei : n.neighbors) {
+                    newNode.neighbors.add(map.get(nei));
+                    if (!set.contains(nei)) {
+                        q.offer(nei);
+                    }
+                }
+                set.add(n);
+            }
+            return map.get(node);
+        }
+    }
+
+    static class UndirectedGraphNode {
+        int label;
+        ArrayList<UndirectedGraphNode> neighbors;
+
+        public UndirectedGraphNode(int x) {
+            label = x;
+            neighbors = new ArrayList<UndirectedGraphNode>();
+        }
     }
 }
