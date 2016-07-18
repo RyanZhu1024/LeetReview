@@ -1,5 +1,8 @@
 package leet;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -3254,9 +3257,7 @@ public class Medium {
         for(int i = 0;i < n;i++){
             int sum = row + i;
             int sub = i - row;
-            if(cols[i] || sumd.contains(sum) || subd.contains(sub)){
-                continue;
-            }else{
+            if (!cols[i] && !sumd.contains(sum) && !subd.contains(sub)) {
                 sumd.add(sum);
                 subd.add(sub);
                 cols[i] = true;
@@ -3275,8 +3276,17 @@ public class Medium {
     }
 
 
-    public static void main(String[] args) {
-        new Medium().woodCut(new int[]{232,124,456},7);
+    public static void main(String[] args) throws IOException {
+        String str = Files.newBufferedReader(Paths.get("/Users/rzhu/Downloads/4.in")).readLine();
+        String data = str.substring(0,str.lastIndexOf(","));
+        String len = str.substring(str.lastIndexOf(",") + 1);
+        int k = Integer.parseInt(len.trim());
+        String[] arr = data.replace("[","").replace("]","").split(",");
+        int[] ints = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            ints[i] = Integer.parseInt(arr[i]);
+        }
+        System.out.println(new Medium().topk(ints, k));
     }
 
     public int longestConsecutive(int[] num) {
@@ -3468,4 +3478,123 @@ public class Medium {
             neighbors = new ArrayList<UndirectedGraphNode>();
         }
     }
+
+
+    ListNode quickSort(ListNode head) {
+        if(head == null || head.next == null) {
+            return head;
+        } else {
+            ListNode slow = head, fast = head.next;
+            while (fast != null && fast.next != null) {
+                slow = slow.next;
+                fast = fast.next.next;
+            }
+            ListNode rp = slow.next;
+            slow.next = null;
+            int pivot = slow.val;
+            ListNode se = new ListNode(0);
+            ListNode big = new ListNode(0);
+            ListNode sei = se, bigi = big;
+            ListNode h1 = head, h2 = rp;
+            while (h1 != null) {
+                if (h1.val <= pivot) {
+                    sei.next = h1;
+                    sei = sei.next;
+                } else {
+                    bigi.next = h1;
+                    bigi = bigi.next;
+                }
+                h1 = h1.next;
+            }
+            while (h2 != null) {
+                if (h2.val <= pivot) {
+                    sei.next = h2;
+                    sei = sei.next;
+                } else {
+                    bigi.next = h2;
+                    bigi = bigi.next;
+                }
+                h2 = h2.next;
+            }
+            bigi.next = null;
+            sei.next = null;
+            ListNode left = quickSort(se.next);
+            ListNode right = quickSort(big.next);
+            if(left == null) {
+                return right;
+            } else if(right == null) {
+                return left;
+            } else {
+                ListNode lt = left;
+                while(lt.next != null) {
+                    lt = lt.next;
+                }
+                lt.next = right;
+                return left;
+            }
+        }
+    }
+
+
+    public int[] topk(int[] nums, int k) {
+        // Write your code here
+        if (nums == null || nums.length < k || k == 0) {
+            return new int[0];
+        } else {
+            int l = 0, r = nums.length - 1;
+            while(l < r) {
+                int index = partition2(nums, l, r);
+                if (index == k - 1) {
+                    break;
+                } else if (index > k - 1) {
+                    r = index - 1;
+                } else {
+                    l = index + 1;
+                }
+            }
+            int[] arr = new int[k];
+            for (int i = 0; i < k; i++) {
+                arr[i] = nums[i];
+            }
+            Arrays.sort(arr);
+            reverse(arr);
+            for (int i : arr) {
+                System.out.print(i + ",");
+            }
+            return arr;
+        }
+    }
+
+    void reverse(int[] arr) {
+        int l = 0, r = arr.length - 1;
+        while(l < r) {
+            swap(l, r, arr);
+            l++;
+            r--;
+        }
+    }
+
+    int partition2(int[] nums, int l, int r) {
+        int pivot = nums[l];
+        while (l < r) {
+            while (l < r && nums[r] <= pivot) {
+                r--;
+            }
+            nums[l] = nums[r];
+            while (l < r && nums[l] >= pivot) {
+                l++;
+            }
+            nums[r] = nums[l];
+        }
+        nums[l] = pivot;
+        return l;
+    }
+
+    void swap(int i, int j, int[] nums) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+
+
 }

@@ -1,9 +1,6 @@
 package leet;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class Test {
     private static class TreeNode {
@@ -16,11 +13,62 @@ public class Test {
         }
     }
 
+    public boolean isValidBST(TreeNode root) {
+        // write your code here
+        return helper(root, Integer.MAX_VALUE, Integer.MIN_VALUE);
+    }
+
+    boolean helper(TreeNode root, int max, int min){
+        if(root == null){
+            return true;
+        }else{
+            boolean left = true, right = true;
+            if(root.left != null){
+                if(root.left.val < root.val && root.left.val > min){
+                    left = helper(root.left, root.val, min);
+                }else{
+                    left = false;
+                }
+            }
+            if(root.right != null){
+                if(root.right.val > root.val && root.right.val < max){
+                    helper(root.right, max, root.val);
+                }else{
+                    right = false;
+                }
+            }
+            return left && right;
+        }
+    }
+
+    public List<List<Integer>> binaryTreePathSum(TreeNode root, int target) {
+        // Write your code here
+        List<List<Integer>> result = new ArrayList<>();
+        if(root == null){
+            return result;
+        }else{
+            List<Integer> cur = new ArrayList<>();
+            helper(root, cur, result, target);
+            return result;
+        }
+    }
+
+    void helper(TreeNode root, List<Integer> cur, List<List<Integer>> result, int target){
+        if(target == 0){
+            result.add(new ArrayList<>(cur));
+        }else{
+            if(root == null){
+                return;
+            }
+            cur.add(root.val);
+            helper(root.left, new ArrayList<>(cur), result, target - root.val);
+            helper(root.right, new ArrayList<>(cur), result, target - root.val);
+        }
+    }
+
     public static void main(String[] args) {
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.right = new TreeNode(3);
-        System.out.println(new Test().serialize(root));
+        int[] arr = new int[]{5,4,23123,5,212,3,1};
+
     }
 
     public ArrayList<ArrayList<Integer>> zigzagLevelOrder(TreeNode root) {
@@ -161,5 +209,31 @@ public class Test {
             }
         }
         return String.join(",", strs);
+    }
+
+    public ArrayList<Integer> inorderTraversal(TreeNode root) {
+        // write your code here
+        ArrayList<Integer> result = new ArrayList<>();
+        if(root == null){
+            return result;
+        }else{
+            Stack<TreeNode> stack = new Stack<>();
+            while(root != null){
+                stack.push(root);
+                root = root.left;
+            }
+            while(!stack.isEmpty()){
+                TreeNode top = stack.pop();
+                result.add(top.val);
+                if(top.right != null){
+                    stack.push(top.right);
+                    TreeNode tmp = top.right.left;
+                    while(tmp != null){
+                        stack.push(tmp);
+                    }
+                }
+            }
+            return result;
+        }
     }
 }
