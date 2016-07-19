@@ -13,49 +13,62 @@ public class Test {
         }
     }
 
-    public ArrayList<ArrayList<Integer>> subsets(int[] nums) {
+    public boolean isValidBST(TreeNode root) {
         // write your code here
-        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
-        if(nums == null || nums.length == 0){
-            return result;
-        }
-        Arrays.sort(nums);
-        ArrayList<Integer> cur = new ArrayList<>();
-        helper(nums, 0, cur, result);
-        return result;
+        return helper(root, Integer.MAX_VALUE, Integer.MIN_VALUE);
     }
 
-    void helper(int[] nums, int start, ArrayList<Integer> cur, ArrayList<ArrayList<Integer>> result){
-        result.add(new ArrayList<>(cur));
-        for(int i = start;i < nums.length;i++){
-            cur.add(nums[i]);
-            helper(nums, i + 1, cur, result);
-            cur.remove(cur.size() - 1);
+    boolean helper(TreeNode root, int max, int min){
+        if(root == null){
+            return true;
+        }else{
+            boolean left = true, right = true;
+            if(root.left != null){
+                if(root.left.val < root.val && root.left.val > min){
+                    left = helper(root.left, root.val, min);
+                }else{
+                    left = false;
+                }
+            }
+            if(root.right != null){
+                if(root.right.val > root.val && root.right.val < max){
+                    helper(root.right, max, root.val);
+                }else{
+                    right = false;
+                }
+            }
+            return left && right;
+        }
+    }
+
+    public List<List<Integer>> binaryTreePathSum(TreeNode root, int target) {
+        // Write your code here
+        List<List<Integer>> result = new ArrayList<>();
+        if(root == null){
+            return result;
+        }else{
+            List<Integer> cur = new ArrayList<>();
+            helper(root, cur, result, target);
+            return result;
+        }
+    }
+
+    void helper(TreeNode root, List<Integer> cur, List<List<Integer>> result, int target){
+        if(target == 0){
+            result.add(new ArrayList<>(cur));
+        }else{
+            if(root == null){
+                return;
+            }
+            cur.add(root.val);
+            helper(root.left, new ArrayList<>(cur), result, target - root.val);
+            helper(root.right, new ArrayList<>(cur), result, target - root.val);
         }
     }
 
     public static void main(String[] args) {
-        System.out.println(new Test().numDecodings("192611"));
-    }
+        int[] arr = new int[]{5,4,23123,5,212,3,1};
 
-    public int numDecodings(String s) {
-        // Write your code here
-        if (s == null || s.isEmpty() || s.charAt(0) == '0') return 0;
-        int[] dp = new int[s.length()];
-        dp[0] = 1;
-        for(int i = 1; i < s.length(); i++) {
-            dp[i] = dp[i - 1];
-            if (s.charAt(i) == '0') {
-                dp[i] = Math.max(1, dp[i - 1] - 1);
-            } else {
-                char pc = s.charAt(i - 1);
-                char c = s.charAt(i);
-                if((pc == '1' && c > '0' && c <= '9') || (pc == '2' && c > '0' && c <= '6')) {
-                    dp[i] *= 2;
-                }
-            }
-        }
-        return dp[s.length() - 1];
     }
 
     public ArrayList<ArrayList<Integer>> zigzagLevelOrder(TreeNode root) {
@@ -196,5 +209,31 @@ public class Test {
             }
         }
         return String.join(",", strs);
+    }
+
+    public ArrayList<Integer> inorderTraversal(TreeNode root) {
+        // write your code here
+        ArrayList<Integer> result = new ArrayList<>();
+        if(root == null){
+            return result;
+        }else{
+            Stack<TreeNode> stack = new Stack<>();
+            while(root != null){
+                stack.push(root);
+                root = root.left;
+            }
+            while(!stack.isEmpty()){
+                TreeNode top = stack.pop();
+                result.add(top.val);
+                if(top.right != null){
+                    stack.push(top.right);
+                    TreeNode tmp = top.right.left;
+                    while(tmp != null){
+                        stack.push(tmp);
+                    }
+                }
+            }
+            return result;
+        }
     }
 }
