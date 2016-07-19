@@ -3276,7 +3276,49 @@ public class Medium {
 
 
     public static void main(String[] args) {
-        new Medium().longestConsecutive(new int[]{100,4,200,1,3,2});
+        ListNode head = new ListNode(1);
+        head.next = new ListNode(2);
+        head.next.next = new ListNode(3);
+        head.next.next.next = new ListNode(4);
+        System.out.println(new Medium().swapNodes(head,2,4));
+    }
+
+    public List<String> stringPermutation2(String str) {
+        // Write your code here
+        List<String> result = new ArrayList<>();
+        if(str == null || str.length() == 0){
+            return result;
+        }
+        char[] cs = str.toCharArray();
+        Arrays.sort(cs);
+        boolean[] used = new boolean[cs.length];
+        List<Character> cur = new ArrayList<>();
+        dfs(cs, used, cur, result);
+        return result;
+    }
+
+    void dfs(char[] cs, boolean[] used, List<Character> cur, List<String> result){
+        if(cur.size() == cs.length){
+            StringBuilder sb = new StringBuilder();
+            for(Character c : cur){
+                sb.append(c);
+            }
+            result.add(sb.toString());
+        }else{
+            for(int i = 0;i < cs.length;i++){
+                if(!used[i]){
+                    if(i > 1 && cs[i] == cs[i - 1] && !used[i - 1]){
+                        continue;
+                    }else{
+                        cur.add(cs[i]);
+                        used[i] = true;
+                        dfs(cs, used, cur, result);
+                        used[i] = false;
+                        cur.remove(cur.size() - 1);
+                    }
+                }
+            }
+        }
     }
 
     public int longestConsecutive(int[] num) {
@@ -3431,5 +3473,37 @@ public class Medium {
             label = x;
             neighbors = new ArrayList<UndirectedGraphNode>();
         }
+    }
+
+    public ListNode swapNodes(ListNode head, int v1, int v2) {
+        // Write your code here
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode pre1 = dummy, pre2 = dummy, n1 = null, n2 = null;
+        ListNode temp = head;
+        while (temp != null) {
+            if (temp.val == v1) {
+                n1 = temp;
+            } else if (temp.val == v2) {
+                n2 = temp;
+            }
+            if (n1 == null) {
+                pre1 = temp;
+            }
+            if (n2 == null) {
+                pre2 = temp;
+            }
+            temp = temp.next;
+
+        }
+        if (n1 == null || n2 == null) {
+            return head;
+        }
+        ListNode next1 = n1.next, next2 = n2.next;
+        pre1.next = n2;
+        pre1.next.next = next1;
+        pre2.next = n1;
+        pre2.next.next = next2;
+        return dummy.next;
     }
 }

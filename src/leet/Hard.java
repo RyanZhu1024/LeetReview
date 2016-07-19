@@ -527,13 +527,36 @@ public class Hard {
         return dummy.next;
     }
 
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int len = nums1.length + nums2.length;
+        if (len % 2 == 1) {
+            return helper(nums1, 0, nums2, 0, len / 2 + 1);
+        } else {
+            return (helper(nums1, 0, nums2, 0, len / 2) + helper(nums1, 0, nums2, 0, len / 2 + 1)) / 2.0;
+        }
+    }
+
+    double helper(int[] nums1, int start1, int[] nums2, int start2, int kth) {
+        if (start1 >= nums1.length) {
+            return nums2[start2 + kth - 1];
+        } else if (start2 >= nums2.length) {
+            return nums1[start1 + kth - 1];
+        } else if (kth == 1) {
+            return Math.min(nums1[start1], nums2[start2]);
+        } else {
+            int val1 = (start1 + kth / 2 - 1) >= nums1.length ? Integer.MAX_VALUE : nums1[start1 + kth / 2 - 1];
+            int val2 = (start2 + kth / 2 - 1) >= nums2.length ? Integer.MAX_VALUE : nums2[start2 + kth / 2 - 1];
+            if (val1 < val2) {
+                return helper(nums1, start1 + kth / 2, nums2, start2, kth - kth / 2);
+            } else {
+                return helper(nums1, start1, nums2, start2 + kth / 2, kth - kth / 2);
+            }
+        }
+    }
+
 
     public static void main(String[] args) {
         Hard h = new Hard();
-        RandomListNode r1 = new RandomListNode(-1);
-//        RandomListNode r2 = new RandomListNode(1);
-//        r1.next = r2;
-        RandomListNode r3 = h.copyRandomList2(r1);
-        System.out.println(r3);
+        System.out.println(h.findMedianSortedArrays(new int[]{1,2},new int[]{1,2}));
     }
 }

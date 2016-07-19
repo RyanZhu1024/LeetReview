@@ -1,9 +1,6 @@
 package leet;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class Test {
     private static class TreeNode {
@@ -16,11 +13,49 @@ public class Test {
         }
     }
 
+    public ArrayList<ArrayList<Integer>> subsets(int[] nums) {
+        // write your code here
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        if(nums == null || nums.length == 0){
+            return result;
+        }
+        Arrays.sort(nums);
+        ArrayList<Integer> cur = new ArrayList<>();
+        helper(nums, 0, cur, result);
+        return result;
+    }
+
+    void helper(int[] nums, int start, ArrayList<Integer> cur, ArrayList<ArrayList<Integer>> result){
+        result.add(new ArrayList<>(cur));
+        for(int i = start;i < nums.length;i++){
+            cur.add(nums[i]);
+            helper(nums, i + 1, cur, result);
+            cur.remove(cur.size() - 1);
+        }
+    }
+
     public static void main(String[] args) {
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.right = new TreeNode(3);
-        System.out.println(new Test().serialize(root));
+        System.out.println(new Test().numDecodings("192611"));
+    }
+
+    public int numDecodings(String s) {
+        // Write your code here
+        if (s == null || s.isEmpty() || s.charAt(0) == '0') return 0;
+        int[] dp = new int[s.length()];
+        dp[0] = 1;
+        for(int i = 1; i < s.length(); i++) {
+            dp[i] = dp[i - 1];
+            if (s.charAt(i) == '0') {
+                dp[i] = Math.max(1, dp[i - 1] - 1);
+            } else {
+                char pc = s.charAt(i - 1);
+                char c = s.charAt(i);
+                if((pc == '1' && c > '0' && c <= '9') || (pc == '2' && c > '0' && c <= '6')) {
+                    dp[i] *= 2;
+                }
+            }
+        }
+        return dp[s.length() - 1];
     }
 
     public ArrayList<ArrayList<Integer>> zigzagLevelOrder(TreeNode root) {
