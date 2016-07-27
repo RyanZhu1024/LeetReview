@@ -8,9 +8,35 @@ import java.util.*;
 public class Facebook {
     public static void main(String[] args) {
         Facebook facebook = new Facebook();
-        System.out.println(10 >> 2);
+        System.out.println(facebook.multiplay(5,-123));
     }
 
+    public int multiplay(int x1, int x2) {
+        if (x1 == 0 || x2 == 0) {
+            return 0;
+        }
+        int symbol = ((x1 > 0) ^ (x2 > 0)) ? -1 : 1;
+        long lx1 = Math.abs((long) x1);
+        long lx2 = Math.abs((long) x2);
+        long ans = 0;
+        while (lx2 > 1) {
+            long power = 1, temp = lx1;
+            while ((power << 1) < lx2) {
+                power <<= 1;
+                temp <<= 1;
+            }
+            lx2 -= power;
+            ans += temp;
+        }
+        if (lx2 == 1) {
+            ans += lx1;
+        }
+        if (symbol == 1) {
+            return (int)ans;
+        } else {
+            return (int)-ans;
+        }
+    }
     public int divide(int dividend, int divisor) {
         if (divisor == 0) {
             return Integer.MAX_VALUE;
@@ -19,8 +45,8 @@ public class Facebook {
             return Integer.MAX_VALUE;
         }
         int symbol = ((dividend > 0 && divisor < 0) || (dividend < 0 && divisor > 0)) ? -1 : 1;
-        long d1 = Math.abs((long)dividend);
-        long d2 = Math.abs((long)divisor);
+        long d1 = Math.abs((long) dividend);
+        long d2 = Math.abs((long) divisor);
         int ans = 0;
         while (d1 >= d2) {
             long power = 1, temp = d2;
@@ -144,6 +170,7 @@ public class Facebook {
     class Item {
         int index;
         char val;
+
         public Item(int i, char c) {
             this.index = i;
             this.val = c;
@@ -152,7 +179,8 @@ public class Facebook {
 
     private class ArrayKey {
         int[] keys;
-        public ArrayKey (String s) {
+
+        public ArrayKey(String s) {
             keys = new int[26];
             for (int i = 0; i < s.length(); i++) {
                 int index = s.charAt(i) - 97;
@@ -162,7 +190,7 @@ public class Facebook {
 
         @Override
         public boolean equals(Object k2) {
-            return Arrays.equals(keys, ((ArrayKey)k2).keys);
+            return Arrays.equals(keys, ((ArrayKey) k2).keys);
         }
 
         @Override
@@ -171,6 +199,7 @@ public class Facebook {
         }
 
     }
+
     public List<List<String>> groupAnagrams(String[] strs) {
         List<List<String>> result = new ArrayList<>();
         if (strs == null || strs.length == 0) {
@@ -184,7 +213,7 @@ public class Facebook {
                 }
                 map.get(key).add(strs[i]);
             }
-            for(List<String> list : map.values()) {
+            for (List<String> list : map.values()) {
                 result.add(list);
             }
             return result;
@@ -192,13 +221,13 @@ public class Facebook {
     }
 
     public int combine123to100() {
-        int[] coins = new int[]{1,2,5};
+        int[] coins = new int[]{1, 2, 5};
         int n = 100;
         return combine123to100Helper(coins, n, 0);
     }
 
     public int combine123to100DP() {
-        int[] coins = new int[]{1,2,5};
+        int[] coins = new int[]{1, 2, 5};
         int n = 100;
 //        int[] dp = new int[101];
 //        dp[0] = 1;
@@ -209,11 +238,11 @@ public class Facebook {
 //        }
 //        return dp[100];
         int[][] dp = new int[4][101];
-        for(int i = 0; i < 4; i++) dp[i][0] = 1;
-        for(int i = 1; i <= 3; i++) {
-            for(int j = 1;j <= 100; j++) {
+        for (int i = 0; i < 4; i++) dp[i][0] = 1;
+        for (int i = 1; i <= 3; i++) {
+            for (int j = 1; j <= 100; j++) {
                 dp[i][j] = dp[i - 1][j];
-                if(j - coins[i - 1] >= 0) {
+                if (j - coins[i - 1] >= 0) {
                     dp[i][j] += dp[i][j - coins[i - 1]];
                 }
             }
@@ -222,11 +251,11 @@ public class Facebook {
     }
 
     private int combine123to100Helper(int[] coins, int n, int begin) {
-        if(n == 0) return 1;
-        if(n < 0) return 0;
+        if (n == 0) return 1;
+        if (n < 0) return 0;
         else {
             int sum = 0;
-            for(int i = begin; i < coins.length; i++) {
+            for (int i = begin; i < coins.length; i++) {
                 sum += combine123to100Helper(coins, n - coins[i], i);
             }
             return sum;
@@ -234,13 +263,21 @@ public class Facebook {
     }
 
 
-     //Definition for an interval.
-     public static class Interval {
-         int start;
-         int end;
-         Interval() { start = 0; end = 0; }
-         Interval(int s, int e) { start = s; end = e; }
-     }
+    //Definition for an interval.
+    public static class Interval {
+        int start;
+        int end;
+
+        Interval() {
+            start = 0;
+            end = 0;
+        }
+
+        Interval(int s, int e) {
+            start = s;
+            end = e;
+        }
+    }
 
 
     public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
@@ -339,6 +376,7 @@ public class Facebook {
      * sort by start time and min heap by end time
      * time: nlogn
      * space: k the number of rooms required
+     *
      * @param intervals
      * @return
      */
@@ -346,13 +384,13 @@ public class Facebook {
         if (intervals == null || intervals.length == 0) {
             return 0;
         } else {
-            Arrays.sort(intervals, new Comparator<Interval>(){
+            Arrays.sort(intervals, new Comparator<Interval>() {
                 @Override
                 public int compare(Interval i1, Interval i2) {
                     return i1.start - i2.start;
                 }
             });
-            PriorityQueue<Interval> queue = new PriorityQueue<>(new Comparator<Interval>(){
+            PriorityQueue<Interval> queue = new PriorityQueue<>(new Comparator<Interval>() {
                 @Override
                 public int compare(Interval i1, Interval i2) {
                     return i1.end - i2.end;
