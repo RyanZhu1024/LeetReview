@@ -3289,6 +3289,44 @@ public class Medium {
         System.out.println(new Medium().topk(ints, k));
     }
 
+    public List<String> stringPermutation2(String str) {
+        // Write your code here
+        List<String> result = new ArrayList<>();
+        if(str == null || str.length() == 0){
+            return result;
+        }
+        char[] cs = str.toCharArray();
+        Arrays.sort(cs);
+        boolean[] used = new boolean[cs.length];
+        List<Character> cur = new ArrayList<>();
+        dfs(cs, used, cur, result);
+        return result;
+    }
+
+    void dfs(char[] cs, boolean[] used, List<Character> cur, List<String> result){
+        if(cur.size() == cs.length){
+            StringBuilder sb = new StringBuilder();
+            for(Character c : cur){
+                sb.append(c);
+            }
+            result.add(sb.toString());
+        }else{
+            for(int i = 0;i < cs.length;i++){
+                if(!used[i]){
+                    if(i > 1 && cs[i] == cs[i - 1] && !used[i - 1]){
+                        continue;
+                    }else{
+                        cur.add(cs[i]);
+                        used[i] = true;
+                        dfs(cs, used, cur, result);
+                        used[i] = false;
+                        cur.remove(cur.size() - 1);
+                    }
+                }
+            }
+        }
+    }
+
     public int longestConsecutive(int[] num) {
         // write you code here
         heapity(num);
