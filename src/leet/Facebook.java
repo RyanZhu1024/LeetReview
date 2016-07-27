@@ -1,12 +1,37 @@
 package leet;
 
+import java.util.*;
+
 /**
  * Created by rzhu on 7/5/16.
  */
 public class Facebook {
     public static void main(String[] args) {
         Facebook facebook = new Facebook();
-        System.out.println(facebook.numDecodings("11"));
+        System.out.println(10 >> 2);
+    }
+
+    public int divide(int dividend, int divisor) {
+        if (divisor == 0) {
+            return Integer.MAX_VALUE;
+        }
+        if (dividend == Integer.MIN_VALUE && divisor == -1) {
+            return Integer.MAX_VALUE;
+        }
+        int symbol = ((dividend > 0 && divisor < 0) || (dividend < 0 && divisor > 0)) ? -1 : 1;
+        long d1 = Math.abs((long)dividend);
+        long d2 = Math.abs((long)divisor);
+        int ans = 0;
+        while (d1 >= d2) {
+            long power = 1, temp = d2;
+            while ((temp << 1) < d1) {
+                power <<= 1;
+                temp <<= 1;
+            }
+            d1 -= temp;
+            ans += power;
+        }
+        return ans * symbol;
     }
 
     public int numDecodings(String s) {
@@ -385,30 +410,4 @@ public class Facebook {
         }
     }
 
-    public int divide(int dividend, int divisor) {
-        if (divisor == 0) {
-            return Integer.MAX_VALUE;
-        }
-        int count = 0, negative = 1;
-        if (dividend > 0 && divisor < 0) {
-            negative = -1;
-            divisor = -divisor;
-        }
-        if (dividend < 0 && divisor > 0) {
-            negative = -1;
-            dividend = -dividend;
-        }
-        if (dividend < 0 && divisor < 0) {
-            dividend = -dividend;
-            divisor = -divisor;
-        }
-        while (dividend >= divisor) {
-            dividend -= divisor;
-            count++;
-            if (count == Integer.MAX_VALUE) {
-                break;
-            }
-        }
-        return count * negative;
-    }
 }
