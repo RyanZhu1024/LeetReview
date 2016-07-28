@@ -8,7 +8,29 @@ import java.util.*;
 public class Facebook {
     public static void main(String[] args) {
         Facebook facebook = new Facebook();
-        System.out.println(facebook.multiplay(5,-123));
+        System.out.println(facebook.countAndSay(1));
+    }
+
+    public String countAndSay(int n) {
+        String s = "1";
+        for (int i = 2; i <= n; i++) {
+            int k = 0;
+            String tmp = s;
+            s = "";
+            while (k < tmp.length()) {
+                int count = 1;
+                char cur = tmp.charAt(k);
+                int j = k + 1;
+                while (j < tmp.length() && tmp.charAt(j) == cur) {
+                    count++;
+                    j++;
+                }
+                k = j;
+                s += String.valueOf(count);
+                s += String.valueOf(cur);
+            }
+        }
+        return s;
     }
 
     public int multiplay(int x1, int x2) {
