@@ -448,4 +448,125 @@ public class Facebook {
         }
     }
 
+    class TrieNode {
+        // Initialize your data structure here.
+        TrieNode[] children;
+        boolean isWord;
+        public TrieNode() {
+            children = new TrieNode[26];
+            isWord = false;
+        }
+    }
+
+    public class Trie {
+        private TrieNode root;
+
+        public Trie() {
+            root = new TrieNode();
+        }
+
+        // Inserts a word into the trie.
+        public void insert(String word) {
+            TrieNode node = root;
+            for (int i = 0; i < word.length(); i++) {
+                char c = word.charAt(i);
+                if (node.children[c - 'a'] == null) {
+                    node.children[c - 'a'] = new TrieNode();
+                }
+                node = node.children[c - 'a'];
+            }
+            node.isWord = true;
+        }
+
+        // Returns if the word is in the trie.
+        public boolean search(String word) {
+            TrieNode node = findNode(word);
+            return node == null ? false : node.isWord;
+        }
+
+        // Returns if there is any word in the trie
+        // that starts with the given prefix.
+        public boolean startsWith(String prefix) {
+            TrieNode node = findNode(prefix);
+            return node == null ? false : true;
+        }
+
+        TrieNode findNode(String str) {
+            TrieNode node = root;
+            for (int i = 0; i < str.length(); i++) {
+                char c = str.charAt(i);
+                if (node.children[c - 'a'] == null) {
+                    return null;
+                }
+                node = node.children[c - 'a'];
+            }
+            return node;
+        }
+    }
+
+    public class WordDictionary {
+
+        class TrieNode {
+            TrieNode[] children;
+            boolean isWord;
+            public TrieNode() {
+                children = new TrieNode[26];
+                isWord = false;
+            }
+        }
+
+        TrieNode root = new TrieNode();
+
+        // Adds a word into the data structure.
+        public void addWord(String word) {
+            TrieNode node = root;
+            for (int i = 0; i < word.length(); i++) {
+                char c = word.charAt(i);
+                if (node.children[c - 'a'] == null) {
+                    node.children[c - 'a'] = new TrieNode();
+                }
+                node = node.children[c - 'a'];
+            }
+            node.isWord = true;
+        }
+
+        // Returns if the word is in the data structure. A word could
+        // contain the dot character '.' to represent any one letter.
+        public boolean search(String word) {
+            Queue<TrieNode> queue = new LinkedList<>();
+            TrieNode dummy = new TrieNode();
+            queue.offer(root);
+            queue.offer(dummy);
+            for (int i = 0; i < word.length(); i++) {
+                char c = word.charAt(i);
+                if (c == '.') {
+                    while (!queue.isEmpty()) {
+                        TrieNode node = queue.poll();
+                        if (node == dummy) break;
+                        for (TrieNode n : node.children) {
+                            if (n != null) {
+                                queue.offer(n);
+                            }
+                        }
+                    }
+                } else {
+                    while (!queue.isEmpty()) {
+                        TrieNode node = queue.poll();
+                        if (node == dummy) break;
+                        if (node.children[c - 'a'] != null) {
+                            queue.offer(node.children[c - 'a']);
+                        }
+                    }
+                }
+                queue.offer(dummy);
+            }
+            while (!queue.isEmpty()) {
+                if (queue.poll().isWord) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
 }
