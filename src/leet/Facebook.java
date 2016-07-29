@@ -8,7 +8,142 @@ import java.util.*;
 public class Facebook {
     public static void main(String[] args) {
         Facebook facebook = new Facebook();
-        System.out.println(facebook.multiplay(5,-123));
+        System.out.println(facebook.countAndSay(1));
+    }
+
+    public static class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode(int x) {
+            val = x;
+        }
+    }
+     public class TreeLinkNode {
+         int val;
+         TreeLinkNode left, right, next;
+         TreeLinkNode(int x) { val = x; }
+    }
+    public void connect(TreeLinkNode root) {
+        if (root == null) {
+            return;
+        } else {
+            Queue<TreeLinkNode> queue = new LinkedList<>();
+            TreeLinkNode dummy = new TreeLinkNode(0);
+            queue.offer(root);
+            queue.offer(dummy);
+            TreeLinkNode pre = null;
+            while (!queue.isEmpty()) {
+                TreeLinkNode node = queue.poll();
+                if (node == dummy && queue.isEmpty()) {
+                    break;
+                } else if (node == dummy) {
+                    queue.offer(dummy);
+                    pre = null;
+                } else {
+                    if(pre != null) {
+                        pre.next = node;
+                    }
+                    pre = node;
+                    if (node.left != null) {
+                        queue.offer(node.left);
+                    }
+                    if (node.right != null) {
+                        queue.offer(node.right);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Definition for a binary tree node.
+     * public class TreeNode {
+     *     int val;
+     *     TreeNode left;
+     *     TreeNode right;
+     *     TreeNode(int x) { val = x; }
+     * }
+     */
+    public class Solution {
+        class Node {
+            TreeNode head;
+            TreeNode tail;
+            public Node(TreeNode h, TreeNode t) {
+                this.head = h;
+                this.tail = t;
+            }
+        }
+        public void flatten(TreeNode root) {
+            if (root == null) {
+                return;
+            } else {
+                helper(root);
+            }
+        }
+
+        Node helper(TreeNode node) {
+            if (node == null) {
+                return null;
+            }
+            Node left = helper(node.left);
+            Node right = helper(node.right);
+            node.left = null;
+            Node cur = new Node(node, node);
+            if (left == null && right == null) {
+                return cur;
+            }
+            if (left != null) {
+                node.right = left.head;
+                cur.tail = left.tail;
+            }
+            if (right != null) {
+                cur.tail.right = right.head;
+                cur.tail = right.tail;
+            }
+            return cur;
+        }
+    }
+
+    public int rob(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        } else if (nums.length == 1) {
+            return nums[0];
+        } else {
+            int pre1 = nums[0], pre2 = Math.max(nums[0], nums[1]);
+            for (int i = 2; i < nums.length; i++) {
+                if (i % 2 == 0) {
+                    pre1 = Math.max(pre1 + nums[i], pre2);
+                } else {
+                    pre2 = Math.max(pre2 + nums[i], pre1);
+                }
+            }
+            return Math.max(pre1, pre2);
+        }
+    }
+
+    public String countAndSay(int n) {
+        String s = "1";
+        for (int i = 2; i <= n; i++) {
+            int k = 0;
+            String tmp = s;
+            s = "";
+            while (k < tmp.length()) {
+                int count = 1;
+                char cur = tmp.charAt(k);
+                int j = k + 1;
+                while (j < tmp.length() && tmp.charAt(j) == cur) {
+                    count++;
+                    j++;
+                }
+                k = j;
+                s += String.valueOf(count);
+                s += String.valueOf(cur);
+            }
+        }
+        return s;
     }
 
     public int multiplay(int x1, int x2) {
@@ -445,6 +580,127 @@ public class Facebook {
             if (i < m - 1) {
                 helper(i + 1, j, grid, table);
             }
+        }
+    }
+
+    class TrieNode {
+        // Initialize your data structure here.
+        TrieNode[] children;
+        boolean isWord;
+        public TrieNode() {
+            children = new TrieNode[26];
+            isWord = false;
+        }
+    }
+
+    public class Trie {
+        private TrieNode root;
+
+        public Trie() {
+            root = new TrieNode();
+        }
+
+        // Inserts a word into the trie.
+        public void insert(String word) {
+            TrieNode node = root;
+            for (int i = 0; i < word.length(); i++) {
+                char c = word.charAt(i);
+                if (node.children[c - 'a'] == null) {
+                    node.children[c - 'a'] = new TrieNode();
+                }
+                node = node.children[c - 'a'];
+            }
+            node.isWord = true;
+        }
+
+        // Returns if the word is in the trie.
+        public boolean search(String word) {
+            TrieNode node = findNode(word);
+            return node == null ? false : node.isWord;
+        }
+
+        // Returns if there is any word in the trie
+        // that starts with the given prefix.
+        public boolean startsWith(String prefix) {
+            TrieNode node = findNode(prefix);
+            return node == null ? false : true;
+        }
+
+        TrieNode findNode(String str) {
+            TrieNode node = root;
+            for (int i = 0; i < str.length(); i++) {
+                char c = str.charAt(i);
+                if (node.children[c - 'a'] == null) {
+                    return null;
+                }
+                node = node.children[c - 'a'];
+            }
+            return node;
+        }
+    }
+
+    public class WordDictionary {
+
+        class TrieNode {
+            TrieNode[] children;
+            boolean isWord;
+            public TrieNode() {
+                children = new TrieNode[26];
+                isWord = false;
+            }
+        }
+
+        TrieNode root = new TrieNode();
+
+        // Adds a word into the data structure.
+        public void addWord(String word) {
+            TrieNode node = root;
+            for (int i = 0; i < word.length(); i++) {
+                char c = word.charAt(i);
+                if (node.children[c - 'a'] == null) {
+                    node.children[c - 'a'] = new TrieNode();
+                }
+                node = node.children[c - 'a'];
+            }
+            node.isWord = true;
+        }
+
+        // Returns if the word is in the data structure. A word could
+        // contain the dot character '.' to represent any one letter.
+        public boolean search(String word) {
+            Queue<TrieNode> queue = new LinkedList<>();
+            TrieNode dummy = new TrieNode();
+            queue.offer(root);
+            queue.offer(dummy);
+            for (int i = 0; i < word.length(); i++) {
+                char c = word.charAt(i);
+                if (c == '.') {
+                    while (!queue.isEmpty()) {
+                        TrieNode node = queue.poll();
+                        if (node == dummy) break;
+                        for (TrieNode n : node.children) {
+                            if (n != null) {
+                                queue.offer(n);
+                            }
+                        }
+                    }
+                } else {
+                    while (!queue.isEmpty()) {
+                        TrieNode node = queue.poll();
+                        if (node == dummy) break;
+                        if (node.children[c - 'a'] != null) {
+                            queue.offer(node.children[c - 'a']);
+                        }
+                    }
+                }
+                queue.offer(dummy);
+            }
+            while (!queue.isEmpty()) {
+                if (queue.poll().isWord) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
