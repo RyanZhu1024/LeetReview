@@ -11,6 +11,119 @@ public class Facebook {
         System.out.println(facebook.countAndSay(1));
     }
 
+    public static class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode(int x) {
+            val = x;
+        }
+    }
+     public class TreeLinkNode {
+         int val;
+         TreeLinkNode left, right, next;
+         TreeLinkNode(int x) { val = x; }
+    }
+    public void connect(TreeLinkNode root) {
+        if (root == null) {
+            return;
+        } else {
+            Queue<TreeLinkNode> queue = new LinkedList<>();
+            TreeLinkNode dummy = new TreeLinkNode(0);
+            queue.offer(root);
+            queue.offer(dummy);
+            TreeLinkNode pre = null;
+            while (!queue.isEmpty()) {
+                TreeLinkNode node = queue.poll();
+                if (node == dummy && queue.isEmpty()) {
+                    break;
+                } else if (node == dummy) {
+                    queue.offer(dummy);
+                    pre = null;
+                } else {
+                    if(pre != null) {
+                        pre.next = node;
+                    }
+                    pre = node;
+                    if (node.left != null) {
+                        queue.offer(node.left);
+                    }
+                    if (node.right != null) {
+                        queue.offer(node.right);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Definition for a binary tree node.
+     * public class TreeNode {
+     *     int val;
+     *     TreeNode left;
+     *     TreeNode right;
+     *     TreeNode(int x) { val = x; }
+     * }
+     */
+    public class Solution {
+        class Node {
+            TreeNode head;
+            TreeNode tail;
+            public Node(TreeNode h, TreeNode t) {
+                this.head = h;
+                this.tail = t;
+            }
+        }
+        public void flatten(TreeNode root) {
+            if (root == null) {
+                return;
+            } else {
+                helper(root);
+            }
+        }
+
+        Node helper(TreeNode node) {
+            if (node == null) {
+                return null;
+            }
+            Node left = helper(node.left);
+            Node right = helper(node.right);
+            node.left = null;
+            Node cur = new Node(node, node);
+            if (left == null && right == null) {
+                return cur;
+            }
+            if (left != null) {
+                node.right = left.head;
+                cur.tail = left.tail;
+            }
+            if (right != null) {
+                cur.tail.right = right.head;
+                cur.tail = right.tail;
+            }
+            return cur;
+        }
+    }
+
+    public int rob(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        } else if (nums.length == 1) {
+            return nums[0];
+        } else {
+            int pre1 = nums[0], pre2 = Math.max(nums[0], nums[1]);
+            for (int i = 2; i < nums.length; i++) {
+                if (i % 2 == 0) {
+                    pre1 = Math.max(pre1 + nums[i], pre2);
+                } else {
+                    pre2 = Math.max(pre2 + nums[i], pre1);
+                }
+            }
+            return Math.max(pre1, pre2);
+        }
+    }
+
     public String countAndSay(int n) {
         String s = "1";
         for (int i = 2; i <= n; i++) {
