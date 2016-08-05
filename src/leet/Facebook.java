@@ -8,7 +8,7 @@ import java.util.*;
 public class Facebook {
     public static void main(String[] args) {
         Facebook facebook = new Facebook();
-        System.out.println(facebook.countAndSay(1));
+        System.out.println(facebook.removeInvalidParentheses("))"));
     }
 
     public static class TreeNode {
@@ -702,6 +702,57 @@ public class Facebook {
             }
             return false;
         }
+    }
+
+    public List<String> removeInvalidParentheses(String s) {
+        List<String> result = new ArrayList<>();
+        if (s == null) {
+            result.add("");
+            return result;
+        } else if (!s.contains("(") && !s.contains(")")) {
+            result.add(s);
+            return result;
+        } else {
+            Queue<String> queue = new LinkedList<>();
+            boolean found = false;
+            Set<String> set = new HashSet<>();
+            set.add(s);
+            queue.offer(s);
+            while (!queue.isEmpty()) {
+                String str = queue.poll();
+                if (valid(str)) {
+                    found = true;
+                    result.add(str);
+                } else if (result.isEmpty()) {
+                    for (int i = 0; i < str.length(); i++) {
+                        if (str.charAt(i) != '(' && str.charAt(i) != ')') continue;
+
+                        String next = str.substring(0, i) + str.substring(i + 1);
+                        if (!set.contains(next)) {
+                            set.add(next);
+                            queue.offer(next);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+    }
+
+
+    boolean valid(String s) {
+        if (s == "") return true;
+        int braces = 0;
+        for (char c : s.toCharArray()) {
+            if (c == '(') {
+                braces++;
+            } else if (c == ')' && braces == 0) {
+                return false;
+            } else if (c == ')' && braces > 0) {
+                braces--;
+            }
+        }
+        return braces == 0;
     }
 
 }
