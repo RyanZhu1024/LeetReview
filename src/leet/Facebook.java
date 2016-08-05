@@ -11,6 +11,39 @@ public class Facebook {
         System.out.println(facebook.removeInvalidParentheses("))"));
     }
 
+    String[] get20 = new String[]{"Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+    String[] lt20 = new String[]{"","One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine","Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+    String[] units = new String[]{"", "Thousand", "Million", "Billion"};
+    public String numberToWords(int num) {
+        if (num == 0) {
+            return "Zero";
+        } else {
+            int count = 0;
+            String result = "";
+            while (num > 0) {
+                if (num % 1000 != 0) {
+                    result = numberToWordsHelper(num % 1000) + units[count] + " " + result;
+                }
+                count++;
+                num /= 1000;
+            }
+            return result;
+        }
+    }
+
+    private String numberToWordsHelper(int i) {
+        if (i == 0) {
+            return "";
+        } else if (i < 20) {
+            return lt20[i] + " ";
+        } else if (i < 100) {
+            return get20[i / 10 - 2] + " " + numberToWordsHelper(i % 10);
+        } else {
+            return lt20[i / 100] + " Hundred " + numberToWords(i % 100);
+        }
+    }
+
+
     public static class TreeNode {
         int val;
         TreeNode left;
