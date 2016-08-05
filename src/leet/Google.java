@@ -1,7 +1,9 @@
 package leet;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by rzhu on 7/28/16.
@@ -9,7 +11,15 @@ import java.util.LinkedList;
 public class Google {
     public static void main(String[] args) {
         Google g = new Google();
-        System.out.println(g.findMaxOA13(1234564));
+        System.out.println(g.solution(
+                "dir1\n" +
+                " dir11\n" +
+                " dir12\n" +
+                "  picture.jpeg\n" +
+                "  dir121\n" +
+                "  file1.txt\n" +
+                "dir2\n" +
+                " file2.gif"));
     }
     public int[] maxSlidingWindow(int[] nums, int k) {
         if (nums == null || nums.length == 0) {
@@ -95,4 +105,73 @@ public class Google {
             return max;
         }
     }
+
+    private class FileTreeNode {
+        String name;
+        List<FileTreeNode> children;
+        FileTreeNode parent;
+        boolean isPicture;
+        int spaces;
+
+        FileTreeNode(String n, boolean p, FileTreeNode pa, int sp) {
+            children = new ArrayList<>();
+            name = n.trim();
+            isPicture = p;
+            parent = pa;
+            spaces = sp;
+        }
+    }
+    int solution(String s) {
+        if (s == null || s.isEmpty()) {
+            return 0;
+        } else {
+            String[] paths = s.split("\n");
+            FileTreeNode root = buildFileTree(paths);
+            List<String> result = new ArrayList<>();
+            dfs(root, "", result);
+            System.out.println(result);
+            return result.size();
+        }
+    }
+
+    private void dfs(FileTreeNode node, String path, List<String> result) {
+        if (node.isPicture) {
+            result.add(path);
+        } else {
+            for (FileTreeNode child : node.children) {
+                dfs(child, path + "/" + child.name, result);
+            }
+        }
+    }
+
+    private FileTreeNode buildFileTree(String[] paths) {
+        FileTreeNode root = new FileTreeNode("", false, null, -1);
+        FileTreeNode cur = root;
+        for (String path : paths) {
+            if (path.lastIndexOf(".") != -1 && !isPictureFile(path)) {
+                continue;
+            }
+            int numberOfSpace = getNumberOfSpace(path);
+            while (numberOfSpace < cur.spaces + 1) {
+                cur = cur.parent;
+            }
+            FileTreeNode node = new FileTreeNode(path, isPictureFile(path), cur, numberOfSpace);
+            cur.children.add(node);
+            cur = node;
+        }
+        return root;
+    }
+
+    private boolean isPictureFile(String name) {
+        return name.endsWith(".jpeg") || name.endsWith(".png") || name.endsWith(".gif");
+    }
+
+    private int getNumberOfSpace(String path) {
+        int i = 0;
+        while (i < path.length() && path.charAt(i) == ' ') {
+            i++;
+        }
+        return i;
+    }
+
 }
