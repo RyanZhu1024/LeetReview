@@ -12,11 +12,13 @@ public class Google {
     public static void main(String[] args) {
         Google g = new Google();
         System.out.println(g.solution(
+                "1.png\n" +
                 "dir1\n" +
                 " dir11\n" +
                 " dir12\n" +
                 "  picture.jpeg\n" +
                 "  dir121\n" +
+                "   2.gif\n" +
                 "  file1.txt\n" +
                 "dir2\n" +
                 " file2.gif"));
@@ -101,6 +103,7 @@ public class Google {
                     String temp = numstr.substring(0, i - 1) + numstr.substring(i);
                     max = Math.max(max, Integer.parseInt(temp));
                 }
+                preChar = curChar;
             }
             return max;
         }
