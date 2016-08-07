@@ -8,7 +8,32 @@ import java.util.*;
 public class Facebook {
     public static void main(String[] args) {
         Facebook facebook = new Facebook();
-        System.out.println(facebook.removeInvalidParentheses("))"));
+        System.out.println(facebook.taskScheduler(new int[]{1,2,1,1,3,4}, 2));
+    }
+
+    public String taskScheduler(int[] threads, int cd) {
+        if (threads == null || threads.length == 0) {
+            return "";
+        } else {
+            int counter = 1;
+            Set<Integer> set = new HashSet<>();
+            for (int thread : threads) {
+                set.add(thread);
+            }
+            Map<Integer, Integer> map = new HashMap<>();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < threads.length; i++) {
+                int curThread = threads[i];
+                while (map.containsKey(curThread) && (counter - map.get(curThread) - 1 < cd)) {
+                    sb.append("_");
+                    counter++;
+                }
+                sb.append(curThread);
+                map.put(curThread, counter);
+                counter++;
+            }
+            return sb.toString();
+        }
     }
 
     String[] get20 = new String[]{"Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
@@ -747,14 +772,12 @@ public class Facebook {
             return result;
         } else {
             Queue<String> queue = new LinkedList<>();
-            boolean found = false;
             Set<String> set = new HashSet<>();
             set.add(s);
             queue.offer(s);
             while (!queue.isEmpty()) {
                 String str = queue.poll();
                 if (valid(str)) {
-                    found = true;
                     result.add(str);
                 } else if (result.isEmpty()) {
                     for (int i = 0; i < str.length(); i++) {
