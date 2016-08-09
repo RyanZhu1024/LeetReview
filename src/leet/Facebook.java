@@ -8,7 +8,110 @@ import java.util.*;
 public class Facebook {
     public static void main(String[] args) {
         Facebook facebook = new Facebook();
-        System.out.println(facebook.taskScheduler(new int[]{1,2,1,1,3,4}, 2));
+        System.out.println(facebook.lengthOfLongestSubstringKDistinct("eceba",2));
+    }
+
+    public int lengthOfLongestSubstringKDistinct(String s, int k) {
+        if (s == null) {
+            return 0;
+        } else if (s.length() <= k) {
+            return s.length();
+        } else {
+            Map<Character, Integer> map = new HashMap<>();
+            int end = 0, begin = 0, len = 0;
+            while (end < s.length()) {
+                char cur = s.charAt(end);
+                if (map.containsKey(cur)) {
+                    map.put(cur, map.get(cur) + 1);
+                } else {
+                    map.put(cur, 1);
+                }
+                while (map.size() > k) {
+                    char head = s.charAt(begin);
+                    map.put(head, map.get(head) - 1);
+                    if (map.get(head) == 0) {
+                        map.remove(head);
+                    }
+                    begin++;
+                }
+                len = Math.max(len, end - begin + 1);
+                end++;
+            }
+            return len;
+        }
+    }
+
+    List<Integer> randomPopHeadOrTail(LinkedList<Integer> numbers) {
+        List<Integer> result = new ArrayList<>();
+        if (numbers.isEmpty()) {
+            return result;
+        }
+        Random random = new Random();
+        ListNode dummy1 = new ListNode(0,null), dummy2 = new ListNode(0,null);
+        ListNode l1 = dummy1, l2 = dummy2;
+        while (!numbers.isEmpty()) {
+            Integer num = null;
+            if (random.nextInt(2) == 0) {
+                num = numbers.poll();
+            } else {
+                num = numbers.pollLast();
+            }
+            if (dummy1.next == null && dummy2.next == null) {
+                l1.next = new ListNode(num, l1);
+                l1 = l1.next;
+            } else {
+                while (num < l1.val && l1.parent != null) {
+                    l1.next = l2.next;
+                    l2.next = l1;
+                    l1 = l1.parent;
+                }
+                l1.next = new ListNode(num, l1);
+                l1 = l1.next;
+            }
+        }
+        l1 = dummy1.next;
+        l2 = dummy2.next;
+        while (l1 != null) {
+            result.add(l1.val);
+            l1 = l1.next;
+        }
+        while (l2 != null) {
+            result.add(l2.val);
+            l2 = l2.next;
+        }
+        return result;
+    }
+
+    class ListNode {
+        int val;
+        ListNode next;
+        ListNode parent;
+        public ListNode(int v , ListNode p) {
+            this.val = v;
+            this.parent = p;
+        }
+    }
+
+    int randomlyReturnIndexOfMax(int[] input) {
+        if (input == null || input.length == 0) {
+            return -1;
+        } else {
+            int max = input[0], count = 1, index = 0;
+            Random random = new Random();
+            for (int i = 1; i < input.length; i++) {
+                if (input[i] > max) {
+                    count = 1;
+                    max = input[i];
+                    index = i;
+                } else if (input[i] == max) {
+                    count++;
+                    if (random.nextInt(count) == 0) {
+                        index = i;
+                    }
+                }
+            }
+            return index;
+        }
     }
 
     public String taskScheduler(int[] threads, int cd) {
