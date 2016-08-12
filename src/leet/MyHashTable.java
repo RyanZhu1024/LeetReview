@@ -76,7 +76,6 @@ public class MyHashTable<K, V> {
         for (int i = 0; i < 100; i++) {
             t.put(String.valueOf(i), i);
         }
-        Object o = new Object();
         for (int i = 0; i < 100; i++) {
             System.out.println(t.get(String.valueOf(i)));
         }

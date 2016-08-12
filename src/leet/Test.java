@@ -67,8 +67,6 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        int[] arr = new int[]{5,4,23123,5,212,3,1};
-
     }
 
     public ArrayList<ArrayList<Integer>> zigzagLevelOrder(TreeNode root) {
