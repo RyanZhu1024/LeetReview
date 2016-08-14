@@ -119,10 +119,6 @@ public class Facebook {
             return "";
         } else {
             int counter = 1;
-            Set<Integer> set = new HashSet<>();
-            for (int thread : threads) {
-                set.add(thread);
-            }
             Map<Integer, Integer> map = new HashMap<>();
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < threads.length; i++) {
