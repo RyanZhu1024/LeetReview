@@ -1,9 +1,6 @@
 package leet;
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by rzhu on 7/28/16.
@@ -11,17 +8,33 @@ import java.util.List;
 public class Google {
     public static void main(String[] args) {
         Google g = new Google();
-        System.out.println(g.solution(
-                "1.png\n" +
-                "dir1\n" +
-                " dir11\n" +
-                " dir12\n" +
-                "  picture.jpeg\n" +
-                "  dir121\n" +
-                "   2.gif\n" +
-                "  file1.txt\n" +
-                "dir2\n" +
-                " file2.gif"));
+        System.out.println(g.nthSuperUglyNumber(11,new int[]{2,3,5}));
+    }
+
+    public int nthSuperUglyNumber(int n, int[] primes) {
+        // Write your code here
+        int count = 1;
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int p : primes) {
+            map.put(p, 0);
+        }
+        int[] res = new int[n];
+        res[0] = 1;
+        while (count < n) {
+            int minVal = Integer.MAX_VALUE, minKey = -1;
+            for (int p : primes) {
+                if (res[map.get(p)] * p < minVal) {
+                    minVal = res[map.get(p)] * p;
+                    minKey = p;
+                }
+            }
+            map.put(minKey, map.get(minKey) + 1);
+            if (minVal > res[count - 1]) {
+                res[count] = minVal;
+                count++;
+            }
+        }
+        return res[n - 1];
     }
     public int[] maxSlidingWindow(int[] nums, int k) {
         if (nums == null || nums.length == 0) {
