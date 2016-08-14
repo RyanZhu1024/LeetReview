@@ -11,6 +11,44 @@ public class Google {
         System.out.println(g.isMatch("aa", ".*"));
     }
 
+    public boolean validTree(int n, int[][] edges) {
+        // Write your code here
+        if (n == 0 || edges == null || edges.length == 0) {
+            return true;
+        }
+        Map<Integer,ArrayList<Integer>> map = new HashMap<>();
+        for (int i = 0; i < edges.length; i++) {
+            Integer n1 = edges[i][0], n2 = edges[i][1];
+            if (!map.containsKey(n1)) {
+                map.put(n1, new ArrayList<Integer>());
+            }
+            if (!map.containsKey(n2)) {
+                map.put(n2, new ArrayList<Integer>());
+            }
+            map.get(n1).add(n2);
+            map.get(n2).add(n1);
+        }
+        Set<Integer> set = new HashSet<>();
+        int node = edges[0][0];
+        set.add(node);
+        return dfs(map, set, node, Integer.MIN_VALUE) && set.size() == n;
+    }
+
+    boolean dfs(Map<Integer, ArrayList<Integer>> map, Set<Integer> set, int node, int parent) {
+        boolean result = true;
+        ArrayList<Integer> neighbors = map.get(node);
+        for (Integer nei : neighbors) {
+            if (nei != parent) {
+                if (set.contains(nei)) {
+                    return false;
+                }
+                set.add(nei);
+                result = result && dfs(map, set, nei, node);
+            }
+        }
+        return result;
+    }
+
     public boolean isMatch(String s, String p) {
         // write your code here
         if (s == null || p == null) {
@@ -38,7 +76,6 @@ public class Google {
             }
             return dp[m][n];
         }
-        System.out.println(g.nthSuperUglyNumber(11,new int[]{2,3,5}));
     }
 
     public int nthSuperUglyNumber(int n, int[] primes) {
