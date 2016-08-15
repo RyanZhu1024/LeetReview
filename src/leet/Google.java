@@ -8,7 +8,41 @@ import java.util.*;
 public class Google {
     public static void main(String[] args) {
         Google g = new Google();
-        System.out.println(g.isMatch("aa", ".*"));
+        System.out.println(g.maxNumber(new int[]{8,5,9,5,1,6,9}, new int[]{2,6,4,3,8,4,1,0,7,2,9,2,8}, 20));
+    }
+
+    public int[] maxNumber(int[] nums1, int[] nums2, int k) {
+        // Write your code here
+        int m = nums1.length, n = nums2.length;
+        long[][][] dp = new long[m + 1][n + 1][k + 1];
+        for (int i = 1; i <= n; i++) {
+            for (int o = 1; o <= i && o <= k; o++) {
+                dp[0][i][o] = Math.max(dp[0][i - 1][o], 10 * dp[0][i - 1][o - 1] + nums2[i - 1]);
+            }
+        }
+        for (int i = 1; i <= m; i++) {
+            for (int o = 1; o <= i && o <= k; o++) {
+                dp[i][0][o] = Math.max(dp[i - 1][0][o], 10 * dp[i - 1][0][o - 1] + nums1[i - 1]);
+            }
+        }
+        for (int i = 1; i < m + 1; i++) {
+            for (int j = 1; j < n + 1; j++) {
+                for (int o = 1; o <= i + j && o <= k; o++) {
+                    long temp1 = 10 * dp[i - 1][j][o - 1] + nums1[i - 1];
+                    long temp2 = 10 * dp[i][j - 1][o - 1] + nums2[j - 1];
+                    dp[i][j][o] = Math.max(Math.max(dp[i - 1][j][o], dp[i][j - 1][o]), Math.max(temp1, temp2));
+                }
+            }
+        }
+        long x = dp[m][n][k];
+        int[] res = new int[k];
+        int index = k - 1;
+        while (x > 1) {
+            res[index] = (int) (x % 10);
+            x /= 10;
+            index--;
+        }
+        return res;
     }
 
     public boolean validTree(int n, int[][] edges) {
@@ -16,7 +50,7 @@ public class Google {
         if (n == 0 || edges == null || edges.length == 0) {
             return true;
         }
-        Map<Integer,ArrayList<Integer>> map = new HashMap<>();
+        Map<Integer, ArrayList<Integer>> map = new HashMap<>();
         for (int i = 0; i < edges.length; i++) {
             Integer n1 = edges[i][0], n2 = edges[i][1];
             if (!map.containsKey(n1)) {
@@ -82,7 +116,7 @@ public class Google {
         // Write your code here
         int count = 1;
         Map<Integer, Integer> map = new HashMap<>();
-        for(int p : primes) {
+        for (int p : primes) {
             map.put(p, 0);
         }
         int[] res = new int[n];
@@ -103,6 +137,7 @@ public class Google {
         }
         return res[n - 1];
     }
+
     public int[] maxSlidingWindow(int[] nums, int k) {
         if (nums == null || nums.length == 0) {
             return new int[0];
@@ -156,7 +191,7 @@ public class Google {
             for (int i = 0; i < numstr.length(); i++) {
                 if (i == numstr.length() - 1) {
                     max = Integer.parseInt(numstr + numstr.charAt(i));
-                } else if (numstr.charAt(i) > numstr.charAt(i + 1)){
+                } else if (numstr.charAt(i) > numstr.charAt(i + 1)) {
                     max = Integer.parseInt(numstr.substring(0, i + 1) +
                             numstr.charAt(i) + numstr.substring(i + 1));
                     break;
@@ -204,6 +239,7 @@ public class Google {
             spaces = sp;
         }
     }
+
     int solution(String s) {
         if (s == null || s.isEmpty()) {
             return 0;
