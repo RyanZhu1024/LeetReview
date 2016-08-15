@@ -11,6 +11,66 @@ public class Google {
         System.out.println(g.isMatch("aa", ".*"));
     }
 
+    public int[] maxNumber(int[] nums1, int[] nums2, int k) {
+        int m = nums1.length, n = nums2.length;
+        List<Integer>[][] predp = new List[m + 1][n + 1];
+        List<Integer>[][] dp = new List[m + 1][n + 1];
+        for (int i = 0; i < m + 1; i++) {
+            for (int j = 0; j < n + 1; j++) {
+                predp[i][j] = new ArrayList<>();
+            }
+        }
+        for (int o = 1; o <= k; o++) {
+            for (int i = o; i <= n; i++) {
+                List<Integer> list = new ArrayList<>(predp[0][i - 1]);
+                list.add(nums2[i - 1]);
+                dp[0][i] = max(dp[0][i - 1], list);
+            }
+            for (int i = o; i <= m; i++) {
+                List<Integer> list = new ArrayList<>(predp[i - 1][0]);
+                list.add(nums1[i - 1]);
+                dp[i][0] = max(dp[i - 1][0], list);
+            }
+            for (int i = 1; i < m + 1; i++) {
+                for (int j = 1; j < n + 1; j++) {
+                    if (i + j < o) continue;
+                    List<Integer> temp1 = new ArrayList<>(predp[i - 1][j]);
+                    temp1.add(nums1[i - 1]);
+                    List<Integer> temp2 = new ArrayList<>(predp[i][j - 1]);
+                    temp2.add(nums2[j - 1]);
+
+                    dp[i][j] = max(max(dp[i - 1][j], dp[i][j - 1]), max(temp1, temp2));
+                }
+            }
+            predp = dp;
+            dp = new List[m + 1][n + 1];
+        }
+        int[] res = new int[k];
+        for (int i = 0; i < k; i++) {
+            res[i] = predp[m][n].get(i);
+        }
+        return res;
+    }
+
+    List<Integer> max(List<Integer> l1, List<Integer> l2) {
+        if (l1 == null) return l2;
+        if (l2 == null) return l1;
+        if(l1.size() > l2.size()) {
+            return l1;
+        } else if (l1.size() < l2.size()) {
+            return l2;
+        } else {
+            for (int i = 0; i < l1.size(); i++) {
+                if (l1.get(i) > l2.get(i)) {
+                    return l1;
+                } else if (l1.get(i) < l2.get(i)) {
+                    return l2;
+                }
+            }
+            return l1;
+        }
+    }
+
     public boolean validTree(int n, int[][] edges) {
         // Write your code here
         if (n == 0 || edges == null || edges.length == 0) {
