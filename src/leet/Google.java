@@ -11,6 +11,59 @@ public class Google {
         System.out.println(g.isMatch("aa", ".*"));
     }
 
+    public ArrayList<ArrayList<Integer>> buildingOutline(int[][] buildings) {
+        // write your code here
+        if (buildings == null || buildings.length == 0) {
+            return new ArrayList<>();
+        }
+        List<Point> points = new ArrayList<>();
+        for (int i = 0; i < buildings.length;i++) {
+            points.add(new Point(buildings[i][0], buildings[i][2]));
+            points.add(new Point(buildings[i][1], -buildings[i][2]));
+        }
+        Collections.sort(points, new Comparator<Point>(){
+            @Override
+            public int compare(Point p1, Point p2) {
+                return p1.x - p2.x;
+            }
+        });
+        for (int i = 0; i < buildings.length;i++) {
+            int start = buildings[i][0], end = buildings[i][1];
+            for (Point p : points) {
+                if (p.x >= start && p.x < end) {
+                    p.y = Math.max(p.y, buildings[i][2]);
+                }
+            }
+        }
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        Point pre = points.get(0);
+        int i = 1;
+        while (i < points.size()) {
+            Point cur = points.get(i);
+            if (pre.y < 0) {
+                pre = cur;
+            } else if (cur.y != pre.y) {
+                ArrayList<Integer> triple = new ArrayList<>();
+                triple.add(pre.x);
+                triple.add(cur.x);
+                triple.add(pre.y);
+                res.add(triple);
+                pre = cur;
+            }
+            i++;
+        }
+        return res;
+    }
+
+    class Point {
+        int x;
+        int y;
+        public Point (int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
     public int[] maxNumber(int[] nums1, int[] nums2, int k) {
         int m = nums1.length, n = nums2.length;
         List<Integer>[][] predp = new List[m + 1][n + 1];
