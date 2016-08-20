@@ -8,42 +8,56 @@ import java.util.*;
 public class Google {
     public static void main(String[] args) {
         Google g = new Google();
-        System.out.println(g.maxNumber(new int[]{8,5,9,5,1,6,9}, new int[]{2,6,4,3,8,4,1,0,7,2,9,2,8}, 20));
+        g.numSquares(12);
     }
 
-    public int[] maxNumber(int[] nums1, int[] nums2, int k) {
-        // Write your code here
-        int m = nums1.length, n = nums2.length;
-        long[][][] dp = new long[m + 1][n + 1][k + 1];
-        for (int i = 1; i <= n; i++) {
-            for (int o = 1; o <= i && o <= k; o++) {
-                dp[0][i][o] = Math.max(dp[0][i - 1][o], 10 * dp[0][i - 1][o - 1] + nums2[i - 1]);
+    class BinaryIndexTree {
+        private int[] tree;
+
+        public BinaryIndexTree(int[] input) {
+            tree = new int[input.length + 1];
+            for (int i = 1; i < input.length + 1; i++) {
+                updateTree(input[i], i);
             }
         }
-        for (int i = 1; i <= m; i++) {
-            for (int o = 1; o <= i && o <= k; o++) {
-                dp[i][0][o] = Math.max(dp[i - 1][0][o], 10 * dp[i - 1][0][o - 1] + nums1[i - 1]);
+
+        public int getPreSum(int index) {
+            int sum = 0;
+            index++;
+            while (index > 0) {
+                sum += tree[index];
+                index = getParent(index);
+            }
+            return sum;
+        }
+
+        private void updateTree(int val, int index) {
+            while (index < tree.length) {
+                tree[index] += val;
+                index = getNext(index);
             }
         }
-        for (int i = 1; i < m + 1; i++) {
-            for (int j = 1; j < n + 1; j++) {
-                for (int o = 1; o <= i + j && o <= k; o++) {
-                    long temp1 = 10 * dp[i - 1][j][o - 1] + nums1[i - 1];
-                    long temp2 = 10 * dp[i][j - 1][o - 1] + nums2[j - 1];
-                    dp[i][j][o] = Math.max(Math.max(dp[i - 1][j][o], dp[i][j - 1][o]), Math.max(temp1, temp2));
-                }
-            }
+
+        private int getParent(int index) {
+            return index - (index & -index);
         }
-        long x = dp[m][n][k];
-        int[] res = new int[k];
-        int index = k - 1;
-        while (x > 1) {
-            res[index] = (int) (x % 10);
-            x /= 10;
-            index--;
+        private int getNext(int index) {
+            return index + (index & -index);
         }
-        return res;
     }
+
+    public int numSquares(int n) {
+        int[] dp = new int[n + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= (int)Math.sqrt(i); j++) {
+                dp[i] = Math.min(dp[i], dp[i - j * j] + 1);
+            }
+        }
+        return dp[n];
+    }
+
 
     public ArrayList<ArrayList<Integer>> buildingOutline(int[][] buildings) {
         // write your code here
