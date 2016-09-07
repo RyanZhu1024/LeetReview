@@ -8,7 +8,34 @@ import java.util.*;
 public class Google {
     public static void main(String[] args) {
         Google g = new Google();
-        g.numSquares(12);
+        System.out.println(g.trap(new int[]{5,2,1,2,1,5}));
+    }
+
+    public int trap(int[] height) {
+        if (height == null || height.length < 3) {
+            return 0;
+        }
+        Stack<Integer> st = new Stack<>();
+        int i = 0, sum = 0;
+        while (i < height.length) {
+            // while (st.isEmpty() || height[i] <= height[st.peek()]) {
+            //     st.push(i);
+            //     i++;
+            // }
+            while (!st.isEmpty() && height[i] > height[st.peek()]) {
+                int top = height[st.pop()];
+                int j = st.isEmpty() ? -1 : st.peek();
+                while (!st.isEmpty() && height[st.peek()] == top) {
+                    j = st.pop();
+                }
+                if (j > 0 && height[st.peek()] > top) {
+                    sum += (Math.min(height[st.peek()], height[i]) - top) * ((i - st.peek()) - 1);
+                }
+            }
+            st.push(i);
+            i++;
+        }
+        return sum;
     }
 
     class BinaryIndexTree {

@@ -13,6 +13,52 @@ public class Test {
         }
     }
 
+    public static class NumArray {
+
+        int[] tree;
+        int[] nums;
+
+        public NumArray(int[] nums) {
+            this.tree = new int[nums.length + 1];
+            this.nums = nums;
+            for (int i = 1; i < nums.length + 1; i++) {
+                updateTree(i, nums[i - 1]);
+            }
+        }
+
+        private void updateTree(int index, int val) {
+            while (index < tree.length) {
+                tree[index] += val;
+                index = getNext(index);
+            }
+        }
+
+        private int getNext(int i) {
+            return i + (i & -i);
+        }
+
+        private int getParent(int i) {
+            return i - (i & -i);
+        }
+
+        void update(int i, int val) {
+            int diff = val - nums[i];
+            nums[i] = val;
+            updateTree(i + 1, diff);
+        }
+
+        public int sumRange(int i, int j) {
+            int sum = 0;
+            j++;
+            while (j > i) {
+                sum += tree[j];
+                j = getParent(j);
+            }
+            return sum;
+        }
+    }
+
+
     public boolean isValidBST(TreeNode root) {
         // write your code here
         return helper(root, Integer.MAX_VALUE, Integer.MIN_VALUE);
@@ -67,7 +113,13 @@ public class Test {
     }
 
     public static void main(String[] args) {
+        NumArray na = new NumArray(new int[]{-1});
+        System.out.println(na.sumRange(0,0));
+        na.update(0,1);
+        System.out.println(na.sumRange(0,0));
     }
+
+
 
     public ArrayList<ArrayList<Integer>> zigzagLevelOrder(TreeNode root) {
         // write your code here

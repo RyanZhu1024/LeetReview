@@ -303,6 +303,7 @@ public class Facebook {
         return s;
     }
 
+    // 5 * 10, 10= 8 + 2, 9 = 8 + 1, 6 = 4 + 2, 13 = 8 + 4 + 1
     public int multiplay(int x1, int x2) {
         if (x1 == 0 || x2 == 0) {
             return 0;

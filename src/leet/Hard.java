@@ -553,10 +553,43 @@ public class Hard {
             }
         }
     }
-
+    public boolean isRectangleCover(int[][] rectangles) {
+        if (rectangles == null || rectangles.length == 0) {
+            return false;
+        } else {
+            int leftX = Integer.MAX_VALUE, rightX = Integer.MIN_VALUE, leftY = Integer.MAX_VALUE, rightY = Integer.MIN_VALUE;
+            for (int[] rectangle1 : rectangles) {
+                leftX = Math.min(leftX, rectangle1[0]);
+                rightX = Math.max(rightX, rectangle1[2]);
+                leftY = Math.min(leftY, rectangle1[1]);
+                rightY = Math.max(rightY, rectangle1[3]);
+            }
+            int row = rightY - leftY, col = rightX - leftX;
+            int moveDown = leftY, moveLeft = leftX;
+            int[][] tb = new int[row][col];
+            for (int[] rectangle : rectangles) {
+                int lx = rectangle[0] - moveLeft;
+                int ly = row - (rectangle[1] - moveDown);
+                int rx = rectangle[2] - moveLeft;
+                int ry = row - (rectangle[3] - moveDown);
+                for (int j = ry; j < ly; j++) {
+                    for (int k = lx; k < rx; k++) {
+                        tb[j][k]++;
+                        if (tb[j][k] > 1) return false;
+                    }
+                }
+            }
+            for (int i = 0; i < row; i++) {
+                for (int j = 0; j < col; j++) {
+                    if (tb[i][j] == 0)  return false;
+                }
+            }
+            return true;
+        }
+    }
 
     public static void main(String[] args) {
         Hard h = new Hard();
-        System.out.println(h.findMedianSortedArrays(new int[]{1,2},new int[]{1,2}));
+        System.out.println(h.isRectangleCover(new int[][]{{1,1,3,3},{3,1,4,2},{3,2,4,4},{1,3,2,4},{2,3,3,4}}));
     }
 }
