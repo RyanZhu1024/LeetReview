@@ -1,5 +1,8 @@
 package leet;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Test {
@@ -112,11 +115,44 @@ public class Test {
         }
     }
 
-    public static void main(String[] args) {
-        NumArray na = new NumArray(new int[]{-1});
-        System.out.println(na.sumRange(0,0));
-        na.update(0,1);
-        System.out.println(na.sumRange(0,0));
+    public static void main(String[] args) throws IOException {
+    }
+
+    static void pingip() throws IOException {
+        String[] ips = new String[]{"8.8.8.8"};
+        Runtime runtime = Runtime.getRuntime();
+        int counts = 3;
+        for (String ip : ips) {
+            double sumsd = 0, summean = 0;
+            for (int j = 0; j < counts; j++) {
+                Process process = runtime.exec("ping -c 4 " + ip);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String inputLine;
+                List<String> lists = new ArrayList<>();
+                while ((inputLine = reader.readLine()) != null) {
+                    lists.add(inputLine);
+                    System.out.println(inputLine);
+                }
+                lists = lists.subList(1, 5);
+                double[] times = new double[4];
+                for (int i = 0; i < 4; i++) {
+                    String res = lists.get(i);
+                    String[] group = res.split(" ");
+                    if (group.length > 6) {
+                        String s = group[6].trim();
+                        times[i] = Double.valueOf(s.substring(s.indexOf("=") + 1));
+                    }
+                }
+                sumsd += sd(times);
+                summean += avg(times);
+                reader.close();
+            }
+            System.out.println("---------------------------");
+            System.out.println("IP: " + ip);
+            System.out.println(String.format("ST DEV: %.3f", sumsd / counts));
+            System.out.println(String.format("ST MEAN: %.3f", summean / counts));
+            System.out.println("---------------------------");
+        }
     }
 
 
@@ -285,5 +321,17 @@ public class Test {
             }
             return result;
         }
+    }
+
+    static double avg(double[] arr) {
+        return Arrays.stream(arr).average().getAsDouble();
+    }
+
+    static double sd(double[] arr) {
+        double avg = Arrays.stream(arr).average().getAsDouble();
+        final double[] sum = {0};
+        Arrays.stream(arr).forEach(value -> sum[0] += Math.pow(value - avg, 2));
+        double res = Math.sqrt(sum[0] / (arr.length));
+        return res;
     }
 }
