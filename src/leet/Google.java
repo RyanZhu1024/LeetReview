@@ -270,7 +270,7 @@ public class Google {
         return result;
     }
 
-    public boolean isMatch(String s, String p) {
+    public boolean regularExpressionMatching(String s, String p) {
         // write your code here
         if (s == null || p == null) {
             return false;
