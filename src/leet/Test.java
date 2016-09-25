@@ -67,22 +67,22 @@ public class Test {
         return helper(root, Integer.MAX_VALUE, Integer.MIN_VALUE);
     }
 
-    boolean helper(TreeNode root, int max, int min){
-        if(root == null){
+    boolean helper(TreeNode root, int max, int min) {
+        if (root == null) {
             return true;
-        }else{
+        } else {
             boolean left = true, right = true;
-            if(root.left != null){
-                if(root.left.val < root.val && root.left.val > min){
+            if (root.left != null) {
+                if (root.left.val < root.val && root.left.val > min) {
                     left = helper(root.left, root.val, min);
-                }else{
+                } else {
                     left = false;
                 }
             }
-            if(root.right != null){
-                if(root.right.val > root.val && root.right.val < max){
+            if (root.right != null) {
+                if (root.right.val > root.val && root.right.val < max) {
                     helper(root.right, max, root.val);
-                }else{
+                } else {
                     right = false;
                 }
             }
@@ -93,20 +93,20 @@ public class Test {
     public List<List<Integer>> binaryTreePathSum(TreeNode root, int target) {
         // Write your code here
         List<List<Integer>> result = new ArrayList<>();
-        if(root == null){
+        if (root == null) {
             return result;
-        }else{
+        } else {
             List<Integer> cur = new ArrayList<>();
             helper(root, cur, result, target);
             return result;
         }
     }
 
-    void helper(TreeNode root, List<Integer> cur, List<List<Integer>> result, int target){
-        if(target == 0){
+    void helper(TreeNode root, List<Integer> cur, List<List<Integer>> result, int target) {
+        if (target == 0) {
             result.add(new ArrayList<>(cur));
-        }else{
-            if(root == null){
+        } else {
+            if (root == null) {
                 return;
             }
             cur.add(root.val);
@@ -116,6 +116,40 @@ public class Test {
     }
 
     public static void main(String[] args) throws IOException {
+        System.out.println(new Solution().combinationSum4(new int[]{1,2,3},3));
+    }
+
+    public static class Solution {
+        int count = 0;
+
+        public int combinationSum4(int[] nums, int target) {
+            if (nums == null || nums.length == 0) {
+                return 0;
+            }
+            Arrays.sort(nums);
+            dfs(nums, target);
+            return count;
+        }
+
+        void dfs(int[] nums, int target) {
+            if (target == 0) {
+                count++;
+                return;
+            }
+            for (int i = 0; i < nums.length; i++) {
+                int rest = target - nums[i];
+                if (rest >= 0) {
+                    dfs(nums, rest);
+                }
+            }
+        }
+    }
+
+    class A {
+        @Override
+        public boolean equals(Object obj) {
+            return super.equals(obj);
+        }
     }
 
     static void pingip() throws IOException {
@@ -156,7 +190,6 @@ public class Test {
     }
 
 
-
     public ArrayList<ArrayList<Integer>> zigzagLevelOrder(TreeNode root) {
         // write your code here
         ArrayList<ArrayList<Integer>> result = new ArrayList<>();
@@ -176,7 +209,7 @@ public class Test {
                         Collections.reverse(cur);
                     }
                     result.add(cur);
-                    if(!queue.isEmpty()) {
+                    if (!queue.isEmpty()) {
                         queue.offer(dummy);
                     }
                     cur = new ArrayList<>();
@@ -270,26 +303,26 @@ public class Test {
     public String serialize(TreeNode root) {
         // write your code here
         ArrayList<String> strs = new ArrayList<>();
-        if(root == null){
+        if (root == null) {
             return "";
         }
         Queue<TreeNode> queue = new LinkedList<>();
         TreeNode dummy = new TreeNode(Integer.MIN_VALUE);
         queue.offer(root);
-        while(!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             TreeNode node = queue.poll();
-            if(node == dummy){
+            if (node == dummy) {
                 strs.add("#");
-            }else{
+            } else {
                 strs.add(String.valueOf(node.val));
-                if(node.left != null){
+                if (node.left != null) {
                     queue.offer(node.left);
-                }else{
+                } else {
                     queue.offer(dummy);
                 }
-                if(node.right != null){
+                if (node.right != null) {
                     queue.offer(node.right);
-                }else{
+                } else {
                     queue.offer(dummy);
                 }
             }
@@ -300,21 +333,21 @@ public class Test {
     public ArrayList<Integer> inorderTraversal(TreeNode root) {
         // write your code here
         ArrayList<Integer> result = new ArrayList<>();
-        if(root == null){
+        if (root == null) {
             return result;
-        }else{
+        } else {
             Stack<TreeNode> stack = new Stack<>();
-            while(root != null){
+            while (root != null) {
                 stack.push(root);
                 root = root.left;
             }
-            while(!stack.isEmpty()){
+            while (!stack.isEmpty()) {
                 TreeNode top = stack.pop();
                 result.add(top.val);
-                if(top.right != null){
+                if (top.right != null) {
                     stack.push(top.right);
                     TreeNode tmp = top.right.left;
-                    while(tmp != null){
+                    while (tmp != null) {
                         stack.push(tmp);
                     }
                 }

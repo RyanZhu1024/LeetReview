@@ -8,7 +8,40 @@ import java.util.*;
 public class Google {
     public static void main(String[] args) {
         Google g = new Google();
-        System.out.println(g.trap(new int[]{5,2,1,2,1,5}));
+//        System.out.println(g.trap(new int[]{5,2,1,2,1,5}));
+        System.out.println(g.getCoin(Integer.MAX_VALUE));
+    }
+
+
+
+    public void arrangeCoins(long[] coins) {
+        for (int i = 0; i < coins.length; i++) {
+            long coin = coins[i];
+            int cur = bisearch(coin);
+            System.out.println(cur);
+        }
+    }
+
+    private long getCoin(int c) {
+        long t = (long) c;
+        return ((1 + t) * t) / 2;
+    }
+
+    private int bisearch(long coin) {
+        int left = 1, right = Integer.MAX_VALUE;
+        while (left + 1 < right) {
+            int mid = left + (right - left) / 2;
+            long tc = getCoin(mid);
+            if (tc == coin) {
+                return mid;
+            } else if (tc < coin) {
+                left = mid;
+            } else {
+                right = mid;
+            }
+        }
+        if (getCoin(right) < coin) return right;
+        return left;
     }
 
     public int trap(int[] height) {

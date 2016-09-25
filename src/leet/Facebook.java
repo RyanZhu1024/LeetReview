@@ -8,7 +8,7 @@ import java.util.*;
 public class Facebook {
     public static void main(String[] args) {
         Facebook facebook = new Facebook();
-        System.out.println(facebook.lengthOfLongestSubstringKDistinct("eceba",2));
+        System.out.println(Arrays.toString(facebook.findOrder(2, new int[][]{{1, 0}})));
     }
 
     public int lengthOfLongestSubstringKDistinct(String s, int k) {
@@ -909,6 +909,78 @@ public class Facebook {
             }
         }
         return braces == 0;
+    }
+
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        Map<Integer, List<Integer>> graph = new HashMap<>();
+        Map<Integer, Integer> degree = new HashMap<>();
+        for (int i = 0; i < numCourses; i++) {
+            graph.put(i, new ArrayList<>());
+            degree.put(i, 0);
+        }
+        for (int i = 0; i < prerequisites.length; i++) {
+            int course = prerequisites[i][0];
+            int pre = prerequisites[i][1];
+            graph.get(pre).add(course);
+            degree.put(course, degree.get(course) + 1);
+        }
+        Queue<Integer> queue = new LinkedList<>();
+        for (Integer key : degree.keySet()) {
+            if (degree.get(key) == 0) {
+                queue.offer(key);
+            }
+        }
+        int[] order = new int[numCourses];
+        Arrays.fill(order, -1);
+        int index = 0;
+        while (!queue.isEmpty()) {
+            int course = queue.poll();
+            order[index++] = course;
+            for (Integer next : graph.get(course)) {
+                degree.put(next, degree.get(next) - 1);
+                if (degree.get(next) == 0) {
+                    queue.offer(next);
+                }
+            }
+        }
+        for (int o : order) {
+            if (o < 0) return new int[0];
+        }
+        return order;
+    }
+
+    public List<String> letterCombinations(String digits) {
+        List<String> res = new ArrayList<>();
+        if (digits == null || digits.isEmpty()) {
+            return res;
+        }
+        Map<String, String> map = new HashMap<>();
+        map.put("2", "abc");
+        map.put("3", "def");
+        map.put("4", "ghi");
+        map.put("5", "jkl");
+        map.put("6", "mno");
+        map.put("7", "pqrs");
+        map.put("8", "tuv");
+        map.put("9", "wxyz");
+        String cur = "";
+
+        dfs(res, cur, digits, map, 0);
+        return res;
+    }
+
+    void dfs(List<String> res, String cur, String digits, Map<String, String> map, int begin) {
+        if (cur.length() == digits.length()) {
+            res.add(cur);
+        } else {
+            for (int i = begin; i < digits.length(); i++) {
+                String digit = String.valueOf(digits.charAt(i));
+                String chars = map.get(digit);
+                for (int j = 0; j < chars.length(); j++) {
+                    dfs(res, cur + chars.charAt(j), digits, map, begin + 1);
+                }
+            }
+        }
     }
 
 }
