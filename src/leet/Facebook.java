@@ -8,7 +8,71 @@ import java.util.*;
 public class Facebook {
     public static void main(String[] args) {
         Facebook facebook = new Facebook();
-        System.out.println(Arrays.toString(facebook.findOrder(2, new int[][]{{1, 0}})));
+        System.out.println(facebook.maximalSquare(new char[][]{{'1','1','1','1'},{'1','1','1','1'},{'1','1','1','1'}}));
+    }
+    public int maximalSquare(char[][] matrix) {
+        if (matrix == null || matrix.length == 0)  return 0;
+        int m = matrix.length, n = matrix[0].length;
+        int[][] dp = new int[m][n];
+        int c = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (matrix[i][j] == '1') c++;
+            }
+        }
+        if (c == 0) return 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                dp[i][j] = matrix[i][j] == '1' ? 1 : 0;
+            }
+        }
+        int max = 1;
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if (dp[i - 1][j - 1] >= 1 && dp[i - 1][j] >= 1 && dp[i][j - 1] >= 1 && matrix[i][j] == '1') {
+                    int sq = Math.min(dp[i - 1][j - 1], Math.min(dp[i][j - 1], dp[i - 1][j]));
+                    dp[i][j] = (int)Math.pow(Math.sqrt(sq) + 1, 2);
+                    max = Math.max(max, dp[i][j]);
+                } else {
+                    dp[i][j] = Character.getNumericValue(matrix[i][j]);
+                }
+            }
+        }
+        return max;
+        // 1111
+        // 1111
+        // 1111
+        // 0111
+        // 0111
+    }
+
+    void swap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
+    public String simplifyPath(String path) {
+        if (path == null) return null;
+        if (path.isEmpty()) return "";
+        String[] subpaths = path.split("/");
+        Stack<String> st = new Stack<>();
+        for (String sub : subpaths) {
+            if (sub.equals(".")) {
+                continue;
+            } else if (sub.equals("..")) {
+                if (!st.isEmpty()) {
+                    st.pop();
+                }
+            } else {
+                st.push(sub);
+            }
+        }
+        String res = "";
+        while (!st.isEmpty()) {
+            res = "/" + st.pop() + res;
+        }
+        return res.isEmpty() ? "/" : res;
     }
 
     public int lengthOfLongestSubstringKDistinct(String s, int k) {
@@ -982,5 +1046,65 @@ public class Facebook {
             }
         }
     }
+    public int numIslandsBFS(char[][] grid) {
+        if (grid == null || grid.length == 0) {
+            return 0;
+        } else {
+            int nums = 0;
+            for (int i = 0; i < grid.length; i++) {
+                for (int j = 0; j < grid[0].length; j++) {
+                    if (grid[i][j] == '1') {
+                        bfs(i, j, grid);
+                        nums++;
+                    }
+                }
+            }
+            return nums;
+        }
+    }
 
+    void bfs(int i, int j, char[][] grid) {
+        Queue<Cell> queue = new LinkedList<>();
+        queue.offer(new Cell(i, j));
+        while (!queue.isEmpty()) {
+            Cell cell = queue.poll();
+            grid[cell.row][cell.col] = '0';
+            if (cell.row > 0 && grid[cell.row - 1][cell.col] == '1') {
+                queue.offer(new Cell(cell.row - 1, cell.col));
+            }
+            if (cell.row < grid.length - 1 && grid[cell.row + 1][cell.col] == '1') {
+                queue.offer(new Cell(cell.row + 1, cell.col));
+            }
+            if (cell.col > 0 && grid[cell.row][cell.col - 1] == '1') {
+                queue.offer(new Cell(cell.row, cell.col - 1));
+            }
+            if (cell.col < grid[0].length - 1 && grid[cell.row][cell.col + 1] == '1') {
+                queue.offer(new Cell(cell.row, cell.col + 1));
+            }
+        }
+    }
+
+    class Cell {
+        int row;
+        int col;
+        public Cell(int r, int c) {
+            this.row = r;
+            this.col = c;
+        }
+    }
+
+    public int[][] sparseMatrix(int[][] A, int[][] B) {
+        int[][] res = new int[A.length][B[0].length];
+        int len = A[0].length;
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j < A[0].length; j++) {
+                if (A[i][j] == 0) continue;
+                for (int k = 0; k < B[j].length; k++) {
+                    if (B[j][k] == 0) continue;
+                    res[i][k] += A[i][j] * B[j][k];
+                }
+            }
+        }
+        return res;
+    }
 }
