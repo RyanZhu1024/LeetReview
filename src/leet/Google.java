@@ -8,8 +8,7 @@ import java.util.*;
 public class Google {
     public static void main(String[] args) {
         Google g = new Google();
-//        System.out.println(g.trap(new int[]{5,2,1,2,1,5}));
-        System.out.println(g.getCoin(Integer.MAX_VALUE));
+        g.wiggleSort(new int[]{1,3,2,2,3,1});
     }
 
 
@@ -479,5 +478,25 @@ public class Google {
         }
         return i;
     }
+    public void wiggleSort(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return;
+        }
+        int i = 0, j = 0;
+        boolean small = true;
+        while (i < nums.length && j < nums.length) {
+            while (j < nums.length && nums[j] == nums[i]){j++;}
+            if (j < nums.length && ((small && nums[i] > nums[j]) || (!small && nums[i] < nums[j]))){
+                swap(nums, i, j);
+                small = !small;
+            }
+            i++;
+        }
+    }
 
+    void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
 }

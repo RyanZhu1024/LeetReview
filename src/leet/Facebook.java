@@ -8,7 +8,89 @@ import java.util.*;
 public class Facebook {
     public static void main(String[] args) {
         Facebook facebook = new Facebook();
-        System.out.println(facebook.maximalSquare(new char[][]{{'1','1','1','1'},{'1','1','1','1'},{'1','1','1','1'}}));
+        System.out.println(facebook.gcd(3,9));
+    }
+
+    public void printBoundries(TreeNode root) {
+        System.out.println(root.val);
+        printLeftBoundries(root.left);
+        printLeaves(root.left);
+        printLeaves(root.right);
+        printRightBoundries(root.right);
+    }
+
+    public void printLeftBoundries2(TreeNode node, boolean print) {
+        if (node != null) {
+            if (print || (node.left == null && node.right == null)) {
+                System.out.println(node.val);
+            }
+            printLeftBoundries2(node.left, print);
+            printLeftBoundries2(node.right, print && node.left == null);
+        }
+    }
+
+    public void printRightBoundries2(TreeNode node, boolean print) {
+        if (node != null) {
+            printRightBoundries2(node.left, print && node.right == null);
+            printRightBoundries2(node.right, print);
+            if (print || (node.left == null && node.right == null)) {
+                System.out.println(node.val);
+            }
+        }
+    }
+
+    void printLeftBoundries(TreeNode node) {
+        if (node != null) {
+            if (node.left != null) {
+                System.out.println(node.val);
+                printLeftBoundries(node.left);
+            } else if (node.right != null){
+                System.out.println(node.val);
+                printLeftBoundries(node.right);
+            }
+        }
+    }
+
+    void printRightBoundries(TreeNode node) {
+        if (node != null) {
+            if (node.right != null) {
+                printRightBoundries(node.right);
+                System.out.println(node.val);
+            } else if (node.left != null) {
+                printRightBoundries(node.left);
+                System.out.println(node.val);
+            }
+        }
+    }
+
+    void printLeaves(TreeNode node) {
+        if (node != null) {
+            printLeaves(node.left);
+            if (node.left == null && node.right == null) {
+                System.out.println(node.val);
+            }
+            printLeaves(node.right);
+        }
+    }
+
+    public int gcd(int a, int b) {
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+    public int numSetBits(long a) {
+        System.out.println(Long.toBinaryString(a));
+        long x = 1, num = 0;
+        for (int i = 0; i < 32; i++) {
+            if ((x & a) == x) {
+                num++;
+            }
+            x = x << 1;
+        }
+        return (int)num;
     }
     public int maximalSquare(char[][] matrix) {
         if (matrix == null || matrix.length == 0)  return 0;
@@ -45,6 +127,7 @@ public class Facebook {
         // 0111
         // 0111
     }
+
 
     void swap(int[] arr, int i, int j) {
         int temp = arr[i];
