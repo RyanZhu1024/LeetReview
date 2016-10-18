@@ -8,7 +8,116 @@ import java.util.*;
 public class Facebook {
     public static void main(String[] args) {
         Facebook facebook = new Facebook();
-        System.out.println(facebook.gcd(3,9));
+        System.out.println(facebook.splitArray(new int[]{1,4,4}, 3));
+    }
+
+    public int splitArray(int[] nums, int m) {
+        if (nums == null || nums.length == 0) return 0;
+        int sum = 0, max = 0;
+        for (int n : nums) {
+            if (n == Integer.MAX_VALUE) return n;
+            max = Math.max(max, n);
+            sum += n;
+        }
+        return binSearch(max, sum, nums, m);
+    }
+
+    int binSearch(int low, int high, int[] nums, int m) {
+        while (low + 1 < high) {
+            int mid = low + (high - low) / 2;
+            if (valid(mid, nums, m)) {
+                high = mid;
+            } else {
+                low = mid;
+            }
+        }
+        if (valid2(high, nums, m)) return high;
+        return low;
+    }
+
+    boolean valid2(int sum, int[] nums, int m) {
+        int c = 1, tempSum = 0;
+        for (int n : nums) {
+            tempSum += n;
+            if (tempSum > sum) {
+                c++;
+                tempSum = n;
+            }
+        }
+        return c == m;
+    }
+
+    boolean valid(int sum, int[] nums, int m) {
+        int c = 1, tempSum = 0;
+        for (int n : nums) {
+            tempSum += n;
+            if (tempSum > sum) {
+                c++;
+                tempSum = n;
+            }
+        }
+        return c <= m;
+    }
+
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        List<String> res = new ArrayList<>();
+        if (words == null || words.length == 0) return res;
+        int i = 0;
+        while (i < words.length) {
+            int len = maxWidth;
+            int j = i;
+            while (j < words.length && len >= words[j].length()) {
+                len -= (words[j].length() + 1);
+                j++;
+            }
+            int c = j - i;
+            len++;
+            if (c == 1) {
+                String curWord = words[i];
+                for (int k = 0; k < len; k++) {
+                    curWord += " ";
+                }
+                res.add(curWord);
+            } else {
+                String str = "";
+                if (j == words.length) {
+                    for (int k = i; k < j; k++) {
+                        str += (words[k] + " ");
+                    }
+                    if (str.length() > maxWidth) {
+                        res.add(str.trim());
+                    } else {
+                        int left = maxWidth - str.length();
+                        for (int k = 0; k < left; k++) {
+                            str += " ";
+                        }
+                        res.add(str);
+                    }
+                } else {
+                    int avg = 0, remain = 0;
+                    if (len > 0) {
+                        avg = len / (c - 1);
+                        remain = len % (c - 1);
+                    }
+                    for (int k = i; k < j; k++) {
+                        String curWord = k < j - 1 ? words[k] + " " : words[k];
+                        if (k < j - 1) {
+                            for (int m = 0; m < avg; m++) {
+                                curWord += " ";
+                            }
+                            if (remain > 0) {
+                                curWord += " ";
+                                remain--;
+                            }
+                        }
+                        str += curWord;
+                    }
+                    res.add(str);
+                }
+            }
+            i = j;
+        }
+        return res;
     }
 
     public void printBoundries(TreeNode root) {

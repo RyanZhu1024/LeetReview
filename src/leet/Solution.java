@@ -1,10 +1,10 @@
 package leet;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
 /**
  * Created by RyanZhu on 28/09/2016.
@@ -60,7 +60,31 @@ public class Solution {
 
     public static void main(String[] args) throws FileNotFoundException {
         Solution s = new Solution();
-        System.out.println(s.minWindow("abc","a"));
+        System.out.println(count("00110"));
+    }
+
+    static int count(String s) {
+        if (s == null || s.isEmpty()) {
+            return 0;
+        }
+        int i = 0;
+        int count = 0;
+        while (i < s.length() - 1) {
+            int j = i + 1;
+            while (j < s.length() && s.charAt(i) == s.charAt(j)) {
+                j++;
+            }
+            int c1 = j - i;
+            int nextStart = j;
+            int k = j + 1;
+            while (k < s.length() && s.charAt(j) == s.charAt(k)) {
+                k++;
+            }
+            int c2 = k - j;
+            count += Math.min(c1, c2);
+            i = j;
+        }
+        return count;
     }
 
     public int maxSubArray(int[] nums, int k) {
@@ -155,5 +179,129 @@ public class Solution {
             j++;
         }
         return res;
+    }
+
+    public void helper(String input) {
+        if (input == null) return;
+        String[] arr = input.split(" ");
+        if (arr.length != 3) return;
+        int n = Integer.parseInt(arr[0]), p = Integer.parseInt(arr[1]),
+                q = Integer.parseInt(arr[2]);
+        List<String> res = new ArrayList<>();
+        for (int i = 1; i <= n; i++){
+            boolean modePQ = i % p == 0 || i % q == 0;
+            boolean containsPQ = containsPQ(i, p, q);
+            if (modePQ && containsPQ) {
+                res.add("OUTTHINK");
+            } else if (modePQ) {
+                res.add("OUT");
+            } else if (containsPQ) {
+                res.add("THINK");
+            } else {
+                res.add(String.valueOf(i));
+            }
+        }
+        System.out.println(String.join(",", res));
+    }
+
+    private boolean containsPQ(int i, int p, int q) {
+        while (i > 0) {
+            if (i % 10 == p || i % 10 == q) {
+                return true;
+            }
+            i /= 10;
+        }
+        return false;
+    }
+
+    void helper2() throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        String s = in.readLine();
+        if (s == null || s.isEmpty()) return;
+        String[] strarr = s.split(",");
+        int n = strarr.length;
+        if (n < 3) return;
+        String p1 = strarr[n - 2], p2 = strarr[n - 1];
+        Map<String, String> relations = new HashMap<>();
+        for (int i = 0; i < n - 2; i++) {
+            String manager = strarr[i].split("\\->")[0];
+            String person = strarr[i].split("\\->")[1];
+            relations.put(person, manager);
+        }
+        Set<String> p1m = new HashSet<>();
+        while (relations.get(p1) != null) {
+            p1m.add(relations.get(p1));
+            p1 = relations.get(p1);
+        }
+        while (relations.get(p2) != null) {
+            if (p1m.contains(relations.get(p2))) {
+                System.out.println(relations.get(p2));
+                break;
+            }
+            p2 = relations.get(p2);
+        }
+    }
+
+    class Person {
+        String name;
+        Person manager;
+    }
+
+    static int maxLength(int[] a, int k) {
+        if (a == null || a.length == 0 || k == 0) return 0;
+        int i = 0, j = 0, sum = 0, max = 0;
+        while (j < a.length) {
+            while (sum > k && i < j) {
+                sum -= a[i];
+                i++;
+            }
+            sum += a[j++];
+            if (sum <= k) {
+                max = Math.max(max, j - i);
+            }
+        }
+        return max;
+    }
+
+    static int findMutationDistance(String start, String end, String[] bank) {
+        if (start == null || end == null) return -1;
+        if (start.equals(end)) return 0;
+        char[] genes = new char[] {'A','C','T','G'};
+        Queue<String> queue = new LinkedList<>();
+        Set<String> set = new HashSet<>();
+        Set<String> bankSet = new HashSet<>();
+        queue.offer(start);
+        queue.offer("");
+        set.add(start);
+        Collections.addAll(bankSet, bank);
+        int dis = 0;
+        while (!queue.isEmpty()) {
+            String cur = queue.poll();
+            if (cur.equals(end)) {
+                return dis;
+            } else if (cur.isEmpty()) {
+                if (queue.isEmpty()) {
+                    break;
+                } else {
+                    queue.offer("");
+                    dis++;
+                }
+            } else {
+                for (int i = 0; i < cur.length(); i++) {
+                    char[] chars = cur.toCharArray();
+                    for (char gene : genes) {
+                        if (chars[i] != gene) {
+                            chars[i] = gene;
+                            String next = String.valueOf(chars);
+                            if (!set.contains(next) && bankSet.contains(next)) {
+                                queue.offer(next);
+                                set.add(next);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return -1;
     }
 }

@@ -8,10 +8,69 @@ import java.util.*;
 public class Google {
     public static void main(String[] args) {
         Google g = new Google();
-        g.wiggleSort(new int[]{1,3,2,2,3,1});
+        Set<String> set = new HashSet<>();
+        set.add("a");
+        set.add("aa");
+        set.add("aaa");
+        set.add("aaaa");
+        set.add("aaaaa");
+        set.add("aaaaaa");
+        set.add("aaaaaaa");
+        set.add("aaaaaaaa");
+        set.add("aaaaaaaaa");
+        set.add("aaaaaaaa");
+        g.wordBreak2("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", set);
     }
 
+    public List<String> wordBreak2(String s, Set<String> wordDict) {
+        List<String> res = new ArrayList<>();
+        if (s == null || s.isEmpty() || wordDict.isEmpty()) {
+            return res;
+        }
+        int len = getMaxLen(wordDict);
+        List<Integer>[] indices = wordBreakHelper(s, wordDict, len);
+        dfs(indices, s, wordDict, res, 0, "");
+        return res;
+    }
 
+    void dfs(List<Integer>[] indices, String s, Set<String> wordDict, List<String> res, int start, String cur) {
+        if (indices[s.length()] == null) return;
+        if (start == s.length() && !cur.isEmpty()) {
+            res.add(cur.trim());
+            return;
+        }
+        for (int index : indices[start]) {
+            String sub = s.substring(start, index);
+            dfs(indices, s, wordDict, res, index, cur + sub + " ");
+        }
+    }
+
+    List<Integer>[] wordBreakHelper(String s, Set<String> wordDict, int len) {
+        List<Integer>[] dp = new List[s.length() + 1];
+        dp[0] = new ArrayList<>();
+        for (int i = 1; i <= s.length(); i++) {
+            for (int j = i - 1; j >= 0 && i - j <= len; j--) {
+                if (dp[j] != null) {
+                    String sub = s.substring(j, i);
+                    if (wordDict.contains(sub)) {
+                        dp[j].add(i);
+                        if (dp[i] == null) {
+                            dp[i] = new ArrayList<>();
+                        }
+                    }
+                }
+            }
+        }
+        return dp;
+    }
+
+    int getMaxLen(Set<String> wordDict) {
+        int max = 0;
+        for (String word : wordDict) {
+            max = Math.max(max, word.length());
+        }
+        return max;
+    }
 
     public void arrangeCoins(long[] coins) {
         for (int i = 0; i < coins.length; i++) {
