@@ -8,7 +8,136 @@ import java.util.*;
 public class Facebook {
     public static void main(String[] args) {
         Facebook facebook = new Facebook();
-        System.out.println(facebook.splitArray(new int[]{1,4,4}, 3));
+        System.out.println(facebook.longestArithmeticProgressionWithMap(new int[]{3,5,6,2,5,4,19,5,6,7,12}));
+//        System.out.println(facebook.longestArithmeticProgression(new int[]{3,5,2,4,19,6,7,12}));
+    }
+
+    private int longestArithmeticProgressionWithMap(int[] input) {
+        if (input == null || input.length == 0) return 0;
+        if (input.length < 3) return input.length;
+        int n = input.length;
+        Arrays.sort(input);
+        Map<Integer, List<Pair>> map = new HashMap<>();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                int diff = input[i] - input[j];
+                if (!map.containsKey(diff)) {
+                    map.put(diff, new ArrayList<>());
+                }
+                map.get(diff).add(new Pair(i, j));
+            }
+        }
+        int max = 1;
+        for (int diff : map.keySet()) {
+            int[] tb = new int[n];
+            Arrays.fill(tb, 1);
+            for (Pair pair : map.get(diff)) {
+                tb[pair.end] = tb[pair.begin] + 1;
+                max = Math.max(max, tb[pair.end]);
+            }
+        }
+        return max;
+    }
+
+    class Pair {
+        int begin;
+        int end;
+        public Pair(int b, int e) {
+            this.begin = b;
+            this.end = e;
+        }
+    }
+
+    public List<int[]> getSkyline(int[][] buildings) {
+        List<Point> points = new ArrayList<>();
+        for (int[] building : buildings) {
+            points.add(new Point(building[0], building[2]));
+            points.add(new Point(building[1], -building[2]));
+        }
+        List<int[]> res = new ArrayList<>();
+        Collections.sort(points, (p1, p2) -> p1.x == p2.x ? p2.y - p1.y : p1.x - p2.x);
+        TreeMap<Integer, Integer> tree = new TreeMap<>(Collections.reverseOrder());
+        tree.put(0, 1);
+        int pre = 0;
+        for (Point point : points) {
+            if (point.y < 0) {
+                if (tree.get(-point.y) > 1) {
+                    tree.put(-point.y, tree.get(-point.y) - 1);
+                } else {
+                    tree.remove(-point.y);
+                }
+            } else {
+                tree.put(point.y, tree.get(point.y) == null ? 1 : tree.get(point.y) + 1);
+            }
+            Integer y = tree.firstKey();
+            if (y != pre) {
+                res.add(new int[]{point.x, y});
+                pre = y;
+            }
+        }
+        return res;
+    }
+
+    class Point {
+        int x;
+        int y;
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public List<String> addOperators(String num, int target) {
+        List<String> rst = new ArrayList<>();
+        if(num == null || num.length() == 0) return rst;
+        helper(rst, "", num, target, 0, 0, 0);
+        return rst;
+    }
+    public void helper(List<String> rst, String path, String num, int target, int pos, long eval, long multed){
+        if(pos == num.length()){
+            if(target == eval)
+                rst.add(path);
+            return;
+        }
+        for(int i = pos; i < num.length(); i++){
+            if(i != pos && num.charAt(pos) == '0') break;
+            long cur = Long.parseLong(num.substring(pos, i + 1));
+            if(pos == 0){
+                helper(rst, path + cur, num, target, i + 1, cur, cur);
+            }
+            else{
+                helper(rst, path + "+" + cur, num, target, i + 1, eval + cur , cur);
+
+                helper(rst, path + "-" + cur, num, target, i + 1, eval -cur, -cur);
+
+                helper(rst, path + "*" + cur, num, target, i + 1, eval - multed + multed * cur, multed * cur );
+            }
+        }
+    }
+
+    public String multiply(String num1, String num2) {
+        if (num1 == null || num1.isEmpty() || num2 == null || num2.isEmpty()) return "0";
+        int m = num1.length(), n = num2.length();
+        int[] res = new int[m + n];
+        for (int i = m - 1; i >= 0; i--) {
+            int carry = 0;
+            for (int j = n - 1; j >= 0; j--) {
+                int prod = Character.getNumericValue(num1.charAt(i)) * Character.getNumericValue(num2.charAt(j)) + carry + res[i + j + 1];
+                carry = prod / 10;
+                prod = prod % 10;
+                res[i + j + 1] = prod;
+            }
+            res[i] += carry;
+        }
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        if (res[0] == 0) {
+            i = 1;
+        }
+        for (; i < res.length; i++) {
+            sb.append(res[i]);
+        }
+        return sb.toString();
     }
 
     public int splitArray(int[] nums, int m) {
@@ -250,7 +379,7 @@ public class Facebook {
         String[] subpaths = path.split("/");
         Stack<String> st = new Stack<>();
         for (String sub : subpaths) {
-            if (sub.equals(".")) {
+            if (sub.equals(".") || sub.isEmpty()) {
                 continue;
             } else if (sub.equals("..")) {
                 if (!st.isEmpty()) {
@@ -391,23 +520,23 @@ public class Facebook {
         }
     }
 
-    String[] get20 = new String[]{"Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+    String[] get20 = new String[]{"", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
     String[] lt20 = new String[]{"","One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine","Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
     String[] units = new String[]{"", "Thousand", "Million", "Billion"};
     public String numberToWords(int num) {
         if (num == 0) {
             return "Zero";
         } else {
-            int count = 0;
-            String result = "";
+            int i = 0;
+            String res = "";
             while (num > 0) {
                 if (num % 1000 != 0) {
-                    result = numberToWordsHelper(num % 1000) + units[count] + " " + result;
+                    res = numberToWordsHelper(num % 1000) + units[i] + " " + res;
                 }
-                count++;
+                i++;
                 num /= 1000;
             }
-            return result;
+            return res.trim();
         }
     }
 
@@ -417,9 +546,9 @@ public class Facebook {
         } else if (i < 20) {
             return lt20[i] + " ";
         } else if (i < 100) {
-            return get20[i / 10 - 2] + " " + numberToWordsHelper(i % 10);
+            return get20[i / 10] + " " + numberToWordsHelper(i % 10);
         } else {
-            return lt20[i / 100] + " Hundred " + numberToWords(i % 100);
+            return lt20[i / 100] + " Hundred " + numberToWordsHelper(i % 100);
         }
     }
 
@@ -1298,5 +1427,103 @@ public class Facebook {
             }
         }
         return res;
+    }
+    public ListNode mergeKLists(ListNode[] lists) {
+        ListNode dummy = new ListNode(0,null);
+        if (lists == null || lists.length == 0) return dummy.next;
+        ListNode dm = dummy;
+        PriorityQueue<ListNode> heap = new PriorityQueue<>((l1, l2) -> l1.val - l2.val);
+        for (ListNode node : lists) {
+            heap.offer(node);
+        }
+        while (!heap.isEmpty()) {
+            ListNode top = heap.poll();
+            dm.next = top;
+            dm = dm.next;
+            if (top.next != null) {
+                heap.offer(top.next);
+            }
+        }
+        dm.next = null;
+        return dummy.next;
+    }
+
+    List<Interval> mergeIntervals(List<Interval> intervals) {
+        List<Interval> res = new ArrayList<>();
+        if (intervals == null || intervals.size() == 0) return res;
+        Collections.sort(intervals, (i1, i2) -> {
+            if (i1.start != i2.start) {
+                return i1.start - i2.start;
+            } else {
+                return i1.end - i2.end;
+            }
+        });
+        int curStart = intervals.get(0).start, curEnd = intervals.get(0).end;
+        for (int i = 1; i < intervals.size(); i++) {
+            if (intervals.get(i).start > curEnd) {
+                res.add(new Interval(curStart, curEnd));
+                curStart = intervals.get(i).start;
+                curEnd = intervals.get(i).end;
+            } else {
+                curEnd = Math.max(curEnd, intervals.get(i).end);
+            }
+        }
+        res.add(new Interval(curStart, curEnd));
+        return res;
+    }
+
+    public int longestArithmeticProgression(int[] input) {
+        if (input == null || input.length == 0) return 0;
+        if (input.length < 3) return input.length;
+        Arrays.sort(input);
+        int n = input.length;
+        int[][] dp = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            Arrays.fill(dp[i], 2);
+        }
+        int max = 2;
+        for (int j = n - 2; j > 0; j--) {
+            int i = j - 1, k = j + 1;
+            while (i >= 0 && k < n) {
+                if (input[i] + input[k] == 2 * input[j]) {
+                    dp[i][j] = dp[j][k] + 1;
+                    max = Math.max(max, dp[i][j]);
+                    i--;
+                    k++;
+                } else if (input[i] + input[k] > 2 * input[j]) {
+                    i--;
+                } else {
+                    k++;
+                }
+            }
+        }
+        return max;
+    }
+
+    public int lengthOfLIS(int[] nums) {
+        if (nums == null || nums.length == 0) return 0;
+        int n = nums.length;
+        int[] dp = new int[n];
+        dp[0] = nums[0];
+        int k = 1;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] > dp[k - 1]) dp[k++] = nums[i];
+            else if (nums[i] < dp[0]) dp[0] = nums[i];
+            else dp[findFirstGreaterEqualThan(0, k - 1, nums[i], dp)] = nums[i];
+        }
+        return k;
+    }
+
+    int findFirstGreaterEqualThan(int s, int e, int k, int[] dp) {
+        while (s + 1 < e) {
+            int mid = s + (e - s) / 2;
+            if (k >= dp[mid]) {
+                s = mid;
+            } else {
+                e = mid;
+            }
+        }
+        if (dp[s] >= k) return s;
+        else return e;
     }
 }

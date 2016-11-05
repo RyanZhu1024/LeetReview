@@ -60,7 +60,113 @@ public class Solution {
 
     public static void main(String[] args) throws FileNotFoundException {
         Solution s = new Solution();
-        System.out.println(count("00110"));
+        Codec c = new Codec();
+        TreeNode root = new TreeNode(-1);
+        root.left = new TreeNode(0);
+        root.right = new TreeNode(1);
+        System.out.println(c.serialize(root));
+        c.deserialize("-1,0,1,#,#,#,#");
+    }
+
+    public static class Codec {
+
+        // Encodes a tree to a single string.
+        public String serialize(TreeNode root) {
+            if (root == null) return null;
+            Queue<TreeNode> queue = new LinkedList<>();
+            queue.offer(root);
+            StringBuilder sb = new StringBuilder();
+            while (!queue.isEmpty()) {
+                TreeNode node = queue.poll();
+                if (node == null) sb.append("#");
+                else {
+                    sb.append(node.val);
+                    queue.offer(node.left);
+                    queue.offer(node.right);
+                }
+                sb.append(",");
+            }
+            return sb.substring(0, sb.length() - 1);
+        }
+
+        // Decodes your encoded data to tree.
+        public TreeNode deserialize(String data) {
+            if (data == null) return null;
+            Queue<TreeNode> queue = new LinkedList<>();
+            String[] inputs = data.split(",");
+            TreeNode root = new TreeNode(Integer.parseInt(inputs[0]));
+            queue.offer(root);
+            int k = 1;
+            while (k < inputs.length) {
+                TreeNode node = queue.poll();
+                if (node != null) {
+                    node.left = inputs[k].equals("#") ? null : new TreeNode(Integer.parseInt(inputs[k]));
+                    node.right = inputs[k + 1].equals("#") ? null : new TreeNode(Integer.parseInt(inputs[k + 1]));
+                    queue.offer(node.left);
+                    queue.offer(node.right);
+                    k += 2;
+                }
+            }
+            return root;
+        }
+    }
+
+    public static class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode(int x) {
+            val = x;
+        }
+    }
+
+    public static boolean isValidBST(TreeNode root) {
+        if (root == null) return true;
+        return helper(root, null, null);
+    }
+    static boolean helper(TreeNode node, Integer min, Integer max) {
+        if (node == null) return true;
+        if (node.val == Integer.MIN_VALUE) {
+            min = Integer.MIN_VALUE;
+        }
+        if (node.val == Integer.MAX_VALUE) {
+            max = Integer.MAX_VALUE;
+        }
+        return (min == null || node.val > min) && (max == null || node.val < max) &&
+                helper(node.left, min , node.val) &&
+                helper(node.right, node.val, max);
+    }
+    public static boolean isValid(String s) {
+        if (s == null) return false;
+        int cnt1 = 0, cnt2 = 0, cnt3 = 0;
+        for (char c : s.toCharArray()) {
+            switch (c) {
+                case '(':
+                    cnt1++;
+                    break;
+                case '[':
+                    cnt2++;
+                    break;
+                case '{':
+                    cnt3++;
+                    break;
+                case ')':
+                    if (cnt1 == 0) return false;
+                    cnt1--;
+                case ']':
+                    if (cnt2 == 0) return false;
+                    cnt2--;
+                    break;
+                case '}':
+                    if (cnt3 == 0) return false;
+                    cnt3--;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return cnt1 == 0 && cnt2 == 0 && cnt3 == 0;
     }
 
     static int count(String s) {
@@ -304,4 +410,6 @@ public class Solution {
         }
         return -1;
     }
+
+
 }
