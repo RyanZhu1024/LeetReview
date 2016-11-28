@@ -8,7 +8,10 @@ import java.util.*;
 public class Facebook {
     public static void main(String[] args) {
         Facebook facebook = new Facebook();
-        System.out.println(facebook.longestArithmeticProgressionWithMap(new int[]{3,5,6,2,5,4,19,5,6,7,12}));
+        int[] arr = {8,7,6,1,2,3,4};
+        facebook.previousPermutation(arr);
+        System.out.println(Arrays.toString(arr));
+//        System.out.println(facebook.longestArithmeticProgressionWithMap(new int[]{3,5,6,2,5,4,19,5,6,7,12}));
 //        System.out.println(facebook.longestArithmeticProgression(new int[]{3,5,2,4,19,6,7,12}));
     }
 
@@ -537,6 +540,51 @@ public class Facebook {
                 num /= 1000;
             }
             return res.trim();
+        }
+    }
+
+    public void previousPermutation(int[] nums) {
+        if (nums == null || nums.length == 0) return;
+        int i = nums.length - 1;
+        while (i > 0 && nums[i] >= nums[i - 1]) {
+            i--;
+        }
+        if (i > 0) {
+            reverse(nums, i, nums.length - 1);
+            for (int k = i; k < nums.length; k++) {
+                if (nums[k] < nums[i - 1]) {
+                    swap(nums, k, i - 1);
+                    break;
+                }
+            }
+        } else {
+            reverse(nums, 0, nums.length - 1);
+        }
+    }
+
+    public void nextPermutation(int[] nums) {
+        if (nums == null || nums.length < 2) return;
+        int i = nums.length - 1;
+        while (i > 0 && nums[i] <= nums[i - 1]) {
+            i--;
+        }
+        if (i > 0) {
+            int j = nums.length - 1;
+            reverse(nums, i, j);
+            for (int k = i; k < nums.length; k++) {
+                if (nums[k] > nums[i - 1]) {
+                    swap(nums, i - 1, k);
+                    break;
+                }
+            }
+        }
+    }
+
+    void reverse(int[] nums, int i, int j) {
+        while (i < j) {
+            swap(nums, i, j);
+            i++;
+            j--;
         }
     }
 

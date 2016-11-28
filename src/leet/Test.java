@@ -116,7 +116,7 @@ public class Test {
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println(new Solution().combinationSum4(new int[]{1,2,3},3));
+        System.out.println(new Test().addOperators("123",6));
     }
 
     public static class Solution {
@@ -366,5 +366,45 @@ public class Test {
         Arrays.stream(arr).forEach(value -> sum[0] += Math.pow(value - avg, 2));
         double res = Math.sqrt(sum[0] / (arr.length));
         return res;
+    }
+
+    class Employee {
+        int wage;
+        public void raise(int diff) throws InvalidRaiseException {
+            if (diff > wage) {
+                throw new InvalidRaiseException();
+            } else {
+                wage += diff;
+            }
+        }
+        class InvalidRaiseException extends Exception {
+
+        }
+    }
+
+    public List<String> addOperators(String num, int target) {
+        List<String> res = new ArrayList<>();
+        if (num == null || num.isEmpty()) return res;
+        dfs(num, "", 0, 0, 0, res, target);
+        return res;
+    }
+
+    void dfs(String num, String cur, int begin, long curVal, long multiVal, List<String> res, int target) {
+        if (begin == num.length()) {
+            if (curVal == target) {
+                res.add(cur);
+            }
+        } else {
+            for (int i = begin; i < num.length(); i++) {
+                long val = Long.parseLong(num.substring(begin, i + 1));
+                if (begin == 0) {
+                    dfs(num, cur + val, i + 1, val, val, res, target);
+                } else {
+                    dfs(num, cur + "+" + val, i + 1, curVal + val, val, res, target);
+                    dfs(num, cur + "-" + val, i + 1, curVal - val, -val, res, target);
+                    dfs(num, cur + "*" + val, i + 1, curVal - multiVal + multiVal * val, multiVal * val, res, target);
+                }
+            }
+        }
     }
 }
